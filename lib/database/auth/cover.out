@@ -1,0 +1,5 @@
+mode: set
+part3/lib/database/auth/auth.go:14.31,18.2 1 1
+part3/lib/database/auth/auth.go:20.73,22.136 2 1
+part3/lib/database/auth/auth.go:26.2,26.18 1 1
+part3/lib/database/auth/auth.go:22.136,24.3 1 1

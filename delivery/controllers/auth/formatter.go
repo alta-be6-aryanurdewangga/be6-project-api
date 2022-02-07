@@ -1,11 +1,10 @@
 package auth
 
-type LoginReqFormat struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
+import "part3/models/user"
 
-type LoginRespFormat struct{
-	Code int `json:`
-	Message string `json:""`
+type LoginRespFormat struct {
+	Code    int       `json:"code"`
+	Message string    `json:"message"`
+	Data    user.User `json:"data"`
+	Token   string    `json:"token"`
 }

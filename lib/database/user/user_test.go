@@ -2,6 +2,7 @@ package user
 
 import (
 	"part3/configs"
+	"part3/models/task"
 	"part3/models/user"
 	"part3/models/user/request"
 	"part3/utils"
@@ -103,6 +104,7 @@ func TestGetAll(t *testing.T) {
 	})
 	t.Run("fail run GetAll", func(t *testing.T) {
 		db.Migrator().DropTable(&user.User{})
+		db.Migrator().DropTable(&task.Task{})
 		repo := New(db)
 		_, err := repo.GetAll()
 		assert.NotNil(t, err)
