@@ -20,14 +20,13 @@ func New(repo auth.Auth) *AuthController {
 	}
 }
 
-func (ac *AuthController) Login() echo.HandlerFunc{
+func (ac *AuthController) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		Userlogin := request.Userlogin{}
 
-		if err := c.Bind(&Userlogin) ; err != nil {
-			return c.JSON(http.StatusBadRequest,base.BadRequest(nil, "error in input file", nil))
+		if err := c.Bind(&Userlogin); err != nil || Userlogin.Email == "" || Userlogin.Password == "" {
+			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in input file", nil))
 		}
-		
 		checkedUser, err := ac.repo.Login(Userlogin)
 
 		if err != nil {
@@ -41,8 +40,8 @@ func (ac *AuthController) Login() echo.HandlerFunc{
 		}
 
 		return c.JSON(http.StatusOK, base.Success(nil, "success login", map[string]interface{}{
-			"data" : checkedUser,
-			"token":token,
+			"data":  checkedUser,
+			"token": token,
 		}))
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
+	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
 
@@ -19,27 +19,25 @@ func TestLogin(t *testing.T) {
 		e := echo.New()
 
 		reqBody, _ := json.Marshal(map[string]string{
-			"name" : "anonim123",
+			"email": "anonim123",
 		})
 
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
-		log.Info(req)
 		res := httptest.NewRecorder()
-		log.Info(res)
 		req.Header.Set("Content-Type", "application/json")
 		context := e.NewContext(req, res)
 		context.SetPath("/login")
-		log.Info(context)
 		authCont := New(&MockAuthLib{})
 		authCont.Login()(context)
-		log.Info(authCont)
 		resp := LoginRespFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &resp)
+		assert.Equal(t, 400, resp.Code)
+		assert.Equal(t, "error in input file", resp.Message)
+	})
 
-		log.Info(resp)
-
-		log.Info(resp.Data.Name)
+	t.Run("error in call database", func(t *testing.T) {
+		
 	})
 }
 
