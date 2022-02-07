@@ -1,19 +1,19 @@
 package book
 
 import (
-	"part3/models/book"
-	"part3/models/book/request"
-	"part3/models/book/response"
+	"part3/models/task"
+	"part3/models/task/request"
+	"part3/models/task/response"
 
 	"gorm.io/gorm"
 )
 
-type BookDb struct {
+type TaskDb struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *BookDb {
-	return &BookDb{db: db}
+func New(db *gorm.DB) *TaskDb {
+	return &TaskDb{db: db}
 }
 
 func (bd *BookDb) Create(newBook book.Book) (book.Book, error) {
