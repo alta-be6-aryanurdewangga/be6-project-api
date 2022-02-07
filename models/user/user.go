@@ -2,6 +2,7 @@ package user
 
 import (
 	"part3/models/user/response"
+	"part3/models/task"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,7 +17,7 @@ type User struct {
 	Name     string `json:"name" gorm:"not null;type:varchar(100)"`
 	Email    string `json:"email" gorm:"index;not null;type:varchar(100)"`
 	Password string `json:"password" gorm:"not null;type:varchar(100)"`
-
+	Tasks    []task.Task `json:"task" gorm:"foreignKey:Task_ID"`
 }
 
 func (u *User) ToUserResponse() response.UserResponse {

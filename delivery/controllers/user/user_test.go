@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"part3/models/user"
-	lib "part3/lib/database/user"
+	// lib "part3/lib/database/user"
 	"testing"
 
 	"github.com/labstack/echo/v4"
@@ -30,9 +30,9 @@ func TestCreate(t *testing.T) {
 		userController := New(&MockUserLib{})
 		userController.Create()(context)
 
-		response := 
+		// response := 
 
-		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		// json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		
 	})
 }
