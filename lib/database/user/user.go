@@ -2,6 +2,8 @@ package user
 
 import (
 	"part3/models/user"
+	"part3/models/user/request"
+	"part3/models/user/response"
 
 	"gorm.io/gorm"
 )
@@ -21,7 +23,7 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 	return newUser, nil
 }
 
-/* func (ud *UserDb) GetById(id int) (user.User, error) {
+func (ud *UserDb) GetById(id int) (user.User, error) {
 	user := user.User{}
 
 	if err := ud.db.Model(&user).Where("id = ?", id).First(&user).Error; err != nil {
@@ -29,9 +31,9 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 	}
 
 	return user, nil
-} */
+}
 
-/* func (ud *UserDb) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
+func (ud *UserDb) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
 
 	_, err := ud.GetById(id)
 
@@ -39,14 +41,14 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 		return user.User{}, err
 	}
 
-	ud.db.Model(&user.User{ID: uint(id)}).Updates(user.User{Name: userReg.Name, Email: userReg.Email, Password: userReg.Password})
+	ud.db.Model(&user.User{Model: gorm.Model{ID: uint(id)}}).Updates(user.User{Name: userReg.Name, Email: userReg.Email, Password: userReg.Password})
 
 	user := userReg.ToUser()
 
 	return user, nil
-} */
+}
 
-/* func (ud *UserDb) DeleteById(id int) (gorm.DeletedAt, error) {
+func (ud *UserDb) DeleteById(id int) (gorm.DeletedAt, error) {
 	user := user.User{}
 	_, err := ud.GetById(id)
 
@@ -57,9 +59,9 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 	ud.db.Model(&user).Where("id = ?", id).Delete(&user)
 
 	return user.DeletedAt, nil
-} */
+}
 
-/* func (ud *UserDb) GetAll() ([]response.UserResponse, error) {
+func (ud *UserDb) GetAll() ([]response.UserResponse, error) {
 	userRespArr := []response.UserResponse{}
 
 	if err := ud.db.Model(user.User{}).Limit(5).Find(&userRespArr).Error; err != nil {
@@ -67,4 +69,4 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 	}
 
 	return userRespArr, nil
-} */
+}

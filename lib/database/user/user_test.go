@@ -3,6 +3,7 @@ package user
 import (
 	"part3/configs"
 	"part3/models/user"
+	"part3/models/user/request"
 	"part3/utils"
 	"testing"
 
@@ -33,7 +34,7 @@ func TestCreate(t *testing.T) {
 	})
 }
 
-/* func TestGetById(t *testing.T) {
+func TestGetById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
@@ -49,9 +50,9 @@ func TestCreate(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})
-} */
+}
 
-/* func TestUpdateById(t *testing.T) {
+func TestUpdateById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
@@ -69,10 +70,9 @@ func TestCreate(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})
+}
 
-} */
-
-/* func TestDeleteById(t *testing.T) {
+func TestDeleteById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
@@ -88,9 +88,9 @@ func TestCreate(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.Equal(t, false, res.Valid)
 	})
-} */
+}
 
-/* func TestGetAll(t *testing.T) {
+func TestGetAll(t *testing.T) {
 	config := configs.GetConfig()
 
 	db := utils.InitDB(config)
@@ -107,4 +107,4 @@ func TestCreate(t *testing.T) {
 		_, err := repo.GetAll()
 		assert.NotNil(t, err)
 	})
-} */
+}
