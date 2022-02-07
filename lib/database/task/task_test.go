@@ -9,7 +9,6 @@ import (
 	"part3/utils"
 	"testing"
 
-	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -32,7 +31,6 @@ func TestCreate(t *testing.T) {
 	t.Run("success run Create", func(t *testing.T) {
 		mockTask := task.Task{User_ID: 1, Name_Task: "anonim123", Priority: 1}
 		res, err := repo.Create(mockTask)
-		log.Info(res, err)
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
 	})
@@ -40,7 +38,6 @@ func TestCreate(t *testing.T) {
 	t.Run("fail run Create", func(t *testing.T) {
 		mockTask := task.Task{Model: gorm.Model{ID: 1}, User_ID: 1, Name_Task: "anonim123", Priority: 1}
 		_, err := repo.Create(mockTask)
-		log.Info(err)
 		assert.NotNil(t, err)
 	})
 }
@@ -114,7 +111,7 @@ func TestGetAll(t *testing.T) {
 	db.Migrator().DropTable(&task.Task{})
 	db.Migrator().DropTable(&user.User{})
 	t.Run("fail run GetAll", func(t *testing.T) {
-		
+
 		_, err := lib.GetAll()
 		assert.NotNil(t, err)
 	})
