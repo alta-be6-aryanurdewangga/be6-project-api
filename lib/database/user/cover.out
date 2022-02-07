@@ -1,0 +1,17 @@
+mode: set
+part3/lib/database/user/user.go:16.31,18.2 1 1
+part3/lib/database/user/user.go:20.64,21.53 1 1
+part3/lib/database/user/user.go:25.2,25.21 1 1
+part3/lib/database/user/user.go:21.53,24.3 2 1
+part3/lib/database/user/user.go:28.54,31.82 2 1
+part3/lib/database/user/user.go:35.2,35.18 1 1
+part3/lib/database/user/user.go:31.82,33.3 1 1
+part3/lib/database/user/user.go:38.87,42.16 2 1
+part3/lib/database/user/user.go:46.2,50.18 3 1
+part3/lib/database/user/user.go:42.16,44.3 1 1
+part3/lib/database/user/user.go:53.62,57.16 3 1
+part3/lib/database/user/user.go:61.2,63.28 2 1
+part3/lib/database/user/user.go:57.16,59.3 1 1
+part3/lib/database/user/user.go:66.61,69.83 2 1
+part3/lib/database/user/user.go:73.2,73.25 1 1
+part3/lib/database/user/user.go:69.83,71.3 1 1
