@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,9 +33,9 @@ func TestCreate(t *testing.T) {
 		userController.Create()(context)
 
 		response := GetUserResponseFormat{}
-
+		
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
-
+		log.Info(response)
 		assert.Equal(t, 201, response.Code)
 		assert.Equal(t, "anonim123", response.Data.Name)
 	})
@@ -43,5 +44,5 @@ func TestCreate(t *testing.T) {
 type MockUserLib struct{}
 
 func (m *MockUserLib) Create(newUser user.User) (user.User, error) {
-	return user.User{Name: "anonim123", Email: "anonim@123", Password: "anonim123"}, nil
+	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
