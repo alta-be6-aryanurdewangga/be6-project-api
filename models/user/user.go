@@ -1,23 +1,18 @@
 package user
 
 import (
-	"part3/models/user/response"
 	"part3/models/task"
-	"time"
+	"part3/models/user/response"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uint           `json:"id" gorm:"primaryKey"`
-	CreatedAt time.Time      `json:"createdAt" `
-	UpdatedAt time.Time      `json:"updatedAt"`
-	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
-
-	Name     string `json:"name" gorm:"not null;type:varchar(100)"`
-	Email    string `json:"email" gorm:"index;not null;type:varchar(100)"`
-	Password string `json:"password" gorm:"not null;type:varchar(100)"`
-	Tasks    []task.Task `json:"task" gorm:"foreignKey:Task_ID"`
+	gorm.Model
+	Name     string      `json:"name" gorm:"not null;type:varchar(100)"`
+	Email    string      `json:"email" gorm:"index;not null;type:varchar(100)"`
+	Password string      `json:"password" gorm:"not null;type:varchar(100)"`
+	Tasks    []task.Task `json:"task" gorm:"foreignKey:User_ID"`
 }
 
 func (u *User) ToUserResponse() response.UserResponse {
@@ -25,8 +20,8 @@ func (u *User) ToUserResponse() response.UserResponse {
 		ID:        u.ID,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
-		
-		Name:      u.Name,
-		Email:     u.Email,
+
+		Name:  u.Name,
+		Email: u.Email,
 	}
 }

@@ -3,7 +3,7 @@ package utils
 import (
 	"fmt"
 	"part3/configs"
-	"part3/models/book"
+	"part3/models/task"
 	"part3/models/user"
 
 	"github.com/labstack/gommon/log"
@@ -34,5 +34,5 @@ func InitDB(config *configs.AppConfig) *gorm.DB {
 
 func AutoMigrate(DB *gorm.DB) {
 	DB.AutoMigrate(&user.User{})
-	DB.AutoMigrate(&book.Book{})
+	DB.AutoMigrate(&task.Task{})
 }

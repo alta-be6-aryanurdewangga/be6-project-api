@@ -1,17 +1,15 @@
 package request
 
-import "part3/models/book"
+import "part3/models/task"
 
-type BookRequest struct {
-	Name      string `json:"name"`
-	Publisher string `json:"publisher"`
-	Author    string `json:"author"`
+type TaskRequest struct {
+	Name_Task string `json:"name_task"`
+	Priority  int    `json:"priority"`
 }
 
-func (b *BookRequest) ToBook() book.Book {
-	return book.Book{
-		Name: b.Name,
-		Publisher: b.Publisher,
-		Author: b.Author,
+func (t *TaskRequest) ToTask() task.Task {
+	return task.Task{
+		Name_Task: t.Name_Task,
+		Priority:  t.Priority,
 	}
 }
