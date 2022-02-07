@@ -1,6 +1,8 @@
 package task
 
 import (
+	// _lib "part3/lib/database/user"
+	// "part3/models/user"
 	"part3/configs"
 	"part3/models/task"
 	"part3/utils"
@@ -8,17 +10,23 @@ import (
 
 	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestCreate(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	db.Migrator().DropTable(&task.Task{})
+	// db.Migrator().DropTable(&user.User{})
 	db.AutoMigrate(&task.Task{})
+	// db.AutoMigrate(&user.User{})
 	repo := New(db)
 
+	// mockUser := user.User{/* Model: gorm.Model{ID: 1}, */Name: "anonim123", Email: "anonim@123", Password: "anonim123"}
+	// res, err := _lib.New(db).Create(mockUser)
+
 	t.Run("success run Create", func(t *testing.T) {
-		mockTask := task.Task{Name_Task: "anonim123", Priority: 1}
+		mockTask := task.Task{User_ID: 1, Name_Task: "anonim123", Priority: 1}
 		res, err := repo.Create(mockTask)
 		log.Info(res, err)
 		assert.Nil(t, err)
@@ -26,7 +34,7 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {
-		mockTask := task.Task{Name_Task: "anonim123", Priority: 1}
+		mockTask := task.Task{Model: gorm.Model{ID: 1}, User_ID: 1, Name_Task: "anonim123", Priority: 1}
 		_, err := repo.Create(mockTask)
 		log.Info(err)
 		assert.NotNil(t, err)
