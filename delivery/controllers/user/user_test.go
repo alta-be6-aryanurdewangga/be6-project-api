@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"part3/models/user"
+
 	// lib "part3/lib/database/user"
 	"testing"
 
 	"github.com/labstack/echo/v4"
-
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreate(t *testing.T) {
@@ -30,10 +31,12 @@ func TestCreate(t *testing.T) {
 		userController := New(&MockUserLib{})
 		userController.Create()(context)
 
-		// response := 
+		response := GetUserResponseFormat{}
 
-		// json.Unmarshal([]byte(res.Body.Bytes()), &response)
-		
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+
+		assert.Equal(t, 201, response.Code)
+		assert.Equal(t, "anonim123", response.Data.Name)
 	})
 }
 
