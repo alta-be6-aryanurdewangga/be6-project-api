@@ -111,9 +111,10 @@ func TestGetAll(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 	})
-
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
 	t.Run("fail run GetAll", func(t *testing.T) {
-		db.Migrator().DropTable(&task.Task{})
+		
 		_, err := lib.GetAll()
 		assert.NotNil(t, err)
 	})
