@@ -12,7 +12,7 @@ type User struct {
 	Name     string      `json:"name" gorm:"not null;type:varchar(100)"`
 	Email    string      `json:"email" gorm:"unique;index;not null;type:varchar(100)"`
 	Password string      `json:"password" gorm:"unique;not null;type:varchar(100)"`
-	Tasks    []task.Task `json:"task" gorm:"foreignKey:User_ID"`
+	Tasks    []task.Task `json:"tasks" gorm:"foreignKey:User_ID"`
 }
 
 func (u *User) ToUserResponse() response.UserResponse {
