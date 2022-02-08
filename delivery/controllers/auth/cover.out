@@ -1,0 +1,10 @@
+mode: set
+part3/delivery/controllers/auth/auth.go:18.42,22.2 1 1
+part3/delivery/controllers/auth/auth.go:24.52,25.36 1 1
+part3/delivery/controllers/auth/auth.go:25.36,28.97 2 1
+part3/delivery/controllers/auth/auth.go:31.3,33.17 2 1
+part3/delivery/controllers/auth/auth.go:36.3,39.17 3 1
+part3/delivery/controllers/auth/auth.go:43.3,46.6 1 1
+part3/delivery/controllers/auth/auth.go:28.97,30.4 1 1
+part3/delivery/controllers/auth/auth.go:33.17,35.4 1 1
+part3/delivery/controllers/auth/auth.go:39.17,41.4 1 1
