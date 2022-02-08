@@ -5,9 +5,10 @@ import (
 	"part3/delivery/middlewares"
 	"part3/lib/database/task"
 	"part3/models/base"
-	"part3/models/task/request"
+	t "part3/models/task"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type TaskController struct {
@@ -23,9 +24,10 @@ func New(repository task.Task) *TaskController {
 func (tc *TaskController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user_id := int(middlewares.ExtractTokenId(c))
-		newTask := request.TaskRequest{}
-
-		if err := c.Bind(&newTask); err != nil || newTask.Name_Task == "" {
+		newTask := TaskRequest{}
+		log.Info(c)
+		if err := c.Bind(&newTask); err != nil /* || newTask.Name_Task == ""  */ {
+			log.Info(err)
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
 				"error in input task",
@@ -33,7 +35,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 			))
 		}
 
-		res, err := tc.repo.Create(user_id,newTask.ToTask())
+		res, err := tc.repo.Create(user_id, t.Task{Name_Task: newTask.Name_Task, Priority: newTask.Priority})
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(

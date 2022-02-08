@@ -9,9 +9,9 @@ import (
 type Task struct {
 	gorm.Model
 
-	User_ID   uint   `json:"user_id"`
-	Name_Task string `json:"name_task" gorm:"not null;type:varchar(100)"`
-	Priority  int    `json:"priority" gorm:"not null;index"`
+	User_ID   uint    `json:"user_id"`
+	Name_Task string  `json:"name_task" gorm:"not null;type:varchar(100)"`
+	Priority  int `json:"priority" gorm:"not null;indext;type:int"`
 }
 
 func (t *Task) ToTaskResponse() response.TaskResponse {

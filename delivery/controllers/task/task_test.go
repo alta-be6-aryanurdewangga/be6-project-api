@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"part3/delivery/controllers/auth"
+	"part3/delivery/middlewares"
 	"part3/models/task"
 	"part3/models/user"
 	"part3/models/user/request"
@@ -36,15 +38,70 @@ func TestCreate(t *testing.T) {
 		response := auth.LoginRespFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		jwtToken = response.Data["token"].(string)
-		log.Info(jwtToken)
 		assert.Equal(t, 200, response.Code)
 		assert.NotNil(t, response.Data["token"])
+	})
+
+	t.Run("error in input task", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]string{
+			"priority": "1",
+		})
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks")
+
+		taskController := New(&MockTaskLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(taskController.Create())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+		response := GetTaskResponFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 400, response.Code)
+		assert.Equal(t, "error in input task", response.Message)
+	})
+
+	t.Run("error in database process", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{
+			"name_task": "anonim",
+			"priority":  1,
+		})
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		log.Info(req)
+		req.Header.Set("Content-Type", "application/json")
+		// req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks")
+
+		taskController := New(&MockTaskLib{})
+		taskController.Create()(context)
+		// if err := middlewares.JwtMiddleware()(taskController.Create())(context); err != nil {
+		// 	log.Fatal(err)
+		// 	return
+		// }
+		response := GetTaskResponFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in database process", response.Message)
 	})
 }
 
 type MockTaskLib struct{}
 
 func (m *MockTaskLib) Create(user_id int, newTask task.Task) (task.Task, error) {
+	if newTask.Name_Task != "anonim123" {
+		return task.Task{}, errors.New("error in database process")
+	}
+
 	return task.Task{
 		User_ID:   uint(user_id),
 		Name_Task: newTask.Name_Task,
