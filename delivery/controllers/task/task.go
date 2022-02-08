@@ -104,3 +104,35 @@ func (tc *TaskController) Put() echo.HandlerFunc {
 		))
 	}
 }
+
+func (tc *TaskController) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+
+		user_id := int(middlewares.ExtractTokenId(c))
+		upTask := request.TaskRequest{}
+		if err := c.Bind(&upTask); err != nil || upTask.Name_Task == "" {
+			return c.JSON(http.StatusBadRequest, base.BadRequest(
+				http.StatusBadRequest,
+				"error in input task",
+				nil,
+			))
+		}
+
+		res, err := tc.repo.DeleteById(id, user_id)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
+
+		return c.JSON(http.StatusCreated, base.Success(
+			http.StatusCreated,
+			"success to delete task",
+			res,
+		))
+	}
+}
