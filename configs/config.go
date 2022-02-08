@@ -12,10 +12,10 @@ type AppConfig struct {
 	Database struct {
 		Driver   string `yaml:"driver"`
 		Name     string `yaml:"name"`
-		Adress   string `yaml:"adress"`
+		Address  string `yaml:"address"`
 		Port     int    `yaml:"port"`
 		Username string `yaml:"username"`
-		Pasword  string `yaml:"password"`
+		Password string `yaml:"password"`
 	}
 }
 
@@ -37,10 +37,10 @@ func initConfig() *AppConfig {
 	defaultConfig.Port = 8000
 	defaultConfig.Database.Driver = "mysql"
 	defaultConfig.Database.Name = "crud_api"
-	defaultConfig.Database.Adress = "localhost"
+	defaultConfig.Database.Address = "localhost"
 	defaultConfig.Database.Port = 3306
 	defaultConfig.Database.Username = "root"
-	defaultConfig.Database.Pasword = "root"
+	defaultConfig.Database.Password = "root"
 
 	viper.SetConfigType("yaml")
 	viper.SetConfigName("config")

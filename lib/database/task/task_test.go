@@ -1,11 +1,11 @@
 package task
 
 import (
-	// _lib "part3/lib/database/user"
-	// "part3/models/user"
 	"part3/configs"
+	_lib "part3/lib/database/user"
 	"part3/models/task"
 	"part3/models/task/request"
+	"part3/models/user"
 	"part3/utils"
 	"testing"
 
@@ -18,13 +18,16 @@ func TestCreate(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	db.Migrator().DropTable(&task.Task{})
-	// db.Migrator().DropTable(&user.User{})
+	db.Migrator().DropTable(&user.User{})
 	db.AutoMigrate(&task.Task{})
-	// db.AutoMigrate(&user.User{})
+	db.AutoMigrate(&user.User{})
 	repo := New(db)
 
-	// mockUser := user.User{/* Model: gorm.Model{ID: 1}, */Name: "anonim123", Email: "anonim@123", Password: "anonim123"}
-	// res, err := _lib.New(db).Create(mockUser)
+	mockUser := user.User{Name: "anonim123", Email: "anonim@123", Password: "anonim123"}
+	_, err := _lib.New(db).Create(mockUser)
+	if err != nil {
+		t.Fail()
+	}
 
 	t.Run("success run Create", func(t *testing.T) {
 		mockTask := task.Task{User_ID: 1, Name_Task: "anonim123", Priority: 1}
@@ -60,7 +63,7 @@ func TestGetById(t *testing.T) {
 	})
 }
 
-func TestUpdateById(t *testing.T)  {
+func TestUpdateById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
@@ -80,7 +83,7 @@ func TestUpdateById(t *testing.T)  {
 	})
 }
 
-func TestDeleteById(t *testing.T)  {
+func TestDeleteById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	lib := New(db)
@@ -98,7 +101,7 @@ func TestDeleteById(t *testing.T)  {
 	})
 }
 
-func TestGetAll(t *testing.T)  {
+func TestGetAll(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	lib := New(db)
