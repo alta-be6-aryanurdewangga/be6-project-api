@@ -32,7 +32,6 @@ func TestLogin(t *testing.T) {
 		authCont := New(&MockAuthLib{})
 		authCont.Login()(context)
 		resp := LoginRespFormat{}
-		log.Info(res.Body)
 		json.Unmarshal([]byte(res.Body.Bytes()), &resp)
 		assert.Equal(t, 400, resp.Code)
 		assert.Equal(t, "error in input file", resp.Message)
