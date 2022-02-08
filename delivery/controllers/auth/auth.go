@@ -8,6 +8,7 @@ import (
 	"part3/models/user/request"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type AuthController struct {
@@ -32,7 +33,7 @@ func (ac *AuthController) Login() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(nil, "error in call database", nil))
 		}
-
+		log.Info(middlewares.GenerateToken(checkedUser))
 		token, err := middlewares.GenerateToken(checkedUser)
 
 		if err != nil {
