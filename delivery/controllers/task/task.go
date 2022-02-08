@@ -46,6 +46,5 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 			"success to create task",
 			res,
 		))
-
 	}
 }

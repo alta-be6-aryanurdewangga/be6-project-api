@@ -30,14 +30,15 @@ func TestCreate(t *testing.T) {
 
 	t.Run("success run Create", func(t *testing.T) {
 		mockTask := task.Task{User_ID: 1, Name_Task: "anonim123", Priority: 1}
-		res, err := repo.Create(mockTask)
+		res, err := repo.Create(int(mockTask.User_ID), mockTask)
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
+		assert.Equal(t, 1, int(res.User_ID))
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {
 		mockTask := task.Task{Model: gorm.Model{ID: 1}, User_ID: 1, Name_Task: "anonim123", Priority: 1}
-		_, err := repo.Create(mockTask)
+		_, err := repo.Create(int(mockTask.User_ID), mockTask)
 		assert.NotNil(t, err)
 	})
 }
@@ -48,13 +49,14 @@ func TestGetById(t *testing.T) {
 	repo := New(db)
 
 	t.Run("success run GetById", func(t *testing.T) {
-		res, err := repo.GetById(1)
+		res, err := repo.GetById(1, 1)
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
+		assert.Equal(t, 1, int(res.User_ID))
 	})
 
 	t.Run("fail run GetById", func(t *testing.T) {
-		res, err := repo.GetById(2)
+		res, err := repo.GetById(2, 1)
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})
@@ -67,14 +69,14 @@ func TestUpdateById(t *testing.T) {
 
 	t.Run("success run UpdateById", func(t *testing.T) {
 		mockTask := request.TaskRequest{Name_Task: "anonim321", Priority: 2}
-		res, err := repo.UpdateById(1, mockTask)
+		res, err := repo.UpdateById(1,1, mockTask)
 		assert.Nil(t, err)
 		assert.Equal(t, "anonim321", res.Name_Task)
 	})
 
 	t.Run("fail run UpdateById", func(t *testing.T) {
 		mockTask := request.TaskRequest{Name_Task: "anonim321", Priority: 2}
-		res, err := repo.UpdateById(2, mockTask)
+		res, err := repo.UpdateById(2,1, mockTask)
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})
@@ -86,13 +88,13 @@ func TestDeleteById(t *testing.T) {
 	lib := New(db)
 
 	t.Run("success run DeleteById", func(t *testing.T) {
-		res, err := lib.DeleteById(1)
+		res, err := lib.DeleteById(1, 1)
 		assert.Nil(t, err)
 		assert.Equal(t, true, res.Valid)
 	})
 
 	t.Run("fail run DeleteById", func(t *testing.T) {
-		res, err := lib.DeleteById(1)
+		res, err := lib.DeleteById(1, 1)
 		assert.NotNil(t, err)
 		assert.Equal(t, false, res.Valid)
 	})
@@ -104,7 +106,7 @@ func TestGetAll(t *testing.T) {
 	lib := New(db)
 
 	t.Run("success run GetAll", func(t *testing.T) {
-		res, err := lib.GetAll()
+		res, err := lib.GetAll(1)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 	})
@@ -112,7 +114,7 @@ func TestGetAll(t *testing.T) {
 	db.Migrator().DropTable(&user.User{})
 	t.Run("fail run GetAll", func(t *testing.T) {
 
-		_, err := lib.GetAll()
+		_, err := lib.GetAll(1)
 		assert.NotNil(t, err)
 	})
 }
