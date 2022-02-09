@@ -14,7 +14,7 @@ import (
 	"part3/models/task/response"
 	"part3/models/user"
 
-	// reqU "part3/models/user/request"
+	reqU "part3/models/user/request"
 	"testing"
 
 	"github.com/labstack/echo/v4"
@@ -213,7 +213,7 @@ func TestPut(t *testing.T) {
 	t.Run("error in input task", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -239,7 +239,7 @@ func TestPut(t *testing.T) {
 			"name_task": "anonim",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -264,7 +264,7 @@ func TestPut(t *testing.T) {
 			"name_task": "anonim123",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -310,7 +310,7 @@ func TestDelete(t *testing.T) {
 	t.Run("error in input task", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -336,7 +336,7 @@ func TestDelete(t *testing.T) {
 			"name_task": "anonim",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -361,7 +361,7 @@ func TestDelete(t *testing.T) {
 			"name_task": "anonim123",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))

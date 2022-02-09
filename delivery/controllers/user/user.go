@@ -7,7 +7,6 @@ import (
 	"part3/lib/database/user"
 	"part3/models/base"
 	"part3/models/user/request"
-	"part3/models/user/response"
 
 	"github.com/labstack/echo/v4"
 )
@@ -44,11 +43,6 @@ func (uc *UserController) GetById() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 		userid := int(middlewares.ExtractTokenId(c))
-		user := response.UserResponse{}
-
-		if err := c.Bind(&user); err != nil {
-			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error to get by id", nil))
-		}
 
 		res, err := uc.repo.GetById(userid)
 
