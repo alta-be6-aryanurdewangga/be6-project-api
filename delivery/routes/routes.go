@@ -9,4 +9,5 @@ import (
 
 func RegisterPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
 	e.POST("/users", uc.Create())
+	
 }
