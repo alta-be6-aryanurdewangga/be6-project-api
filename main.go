@@ -26,7 +26,7 @@ func main() {
 
 	e := echo.New()
 
-	routes.RegisterPath(e, userController, authController)
+	routes.UserPath(e, userController, authController)
 
 	log.Fatal(e.Start(fmt.Sprintf(":%d", config.Port)))
 }
