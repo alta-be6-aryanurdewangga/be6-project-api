@@ -219,7 +219,7 @@ func TestPut(t *testing.T) {
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 		context := e.NewContext(req, res)
 		context.SetPath("/todo/tasks/1")
-
+		
 		taskController := New(&MockFailTaskLib{})
 		// taskController.Create()(context)
 		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {
@@ -269,16 +269,19 @@ func TestPut(t *testing.T) {
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 		context := e.NewContext(req, res)
-		context.SetPath("/todo/tasks/1")
-
+		context.SetPath("/todo/tasks/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+		log.Info(context.Path())
 		taskController := New(&MockTaskLib{})
 		// taskController.Create()(context)
 		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
+		
 		response := GetTaskResponFormat{}
-
+		
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, 201, response.Code)
 		assert.Equal(t, "success to update task", response.Message)
