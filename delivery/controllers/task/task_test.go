@@ -13,7 +13,8 @@ import (
 	"part3/models/task/request"
 	"part3/models/task/response"
 	"part3/models/user"
-	reqU "part3/models/user/request"
+
+	// reqU "part3/models/user/request"
 	"testing"
 
 	"github.com/labstack/echo/v4"
@@ -284,7 +285,7 @@ func TestPut(t *testing.T) {
 	})
 }
 
-func TestDelete(t *testing.T)  {
+func TestDelete(t *testing.T) {
 	var jwtToken string
 	t.Run("success login", func(t *testing.T) {
 		e := echo.New()
