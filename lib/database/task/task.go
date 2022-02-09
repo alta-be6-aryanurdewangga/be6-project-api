@@ -17,7 +17,8 @@ func New(db *gorm.DB) *TaskDb {
 }
 
 func (td *TaskDb) Create(user_id int, newTask task.Task) (task.Task, error) {
-	if err := td.db.Where("user_id = ?", user_id).Create(&newTask).Error; err != nil {
+	newTask.User_ID = uint(user_id)
+	if err := td.db.Create(&newTask).Error; err != nil {
 		return newTask, err
 	}
 	return newTask, nil

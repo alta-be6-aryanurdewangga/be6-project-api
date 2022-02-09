@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type TaskController struct {
@@ -25,6 +26,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user_id := int(middlewares.ExtractTokenId(c))
 		newTask := request.TaskRequest{}
+
 		if err := c.Bind(&newTask); err != nil || newTask.Name_Task == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
@@ -36,6 +38,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 		res, err := tc.repo.Create(user_id, newTask.ToTask())
 
 		if err != nil {
+			log.Info(err)
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
 				http.StatusInternalServerError,
 				"error in database process",
@@ -76,7 +79,8 @@ func (tc *TaskController) GetAll() echo.HandlerFunc {
 func (tc *TaskController) Put() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-
+		log.Info(c.Path())
+		log.Info(id)
 		user_id := int(middlewares.ExtractTokenId(c))
 		upTask := request.TaskRequest{}
 		if err := c.Bind(&upTask); err != nil || upTask.Name_Task == "" {

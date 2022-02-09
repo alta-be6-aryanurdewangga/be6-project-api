@@ -39,6 +39,13 @@ func TestGetById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&user.User{})
+	mocUser := user.User{Name: "anonim123", Email: "anonim@123", Password: "anonim123"}
+	_, err := repo.Create(mocUser)
+	if err != nil {
+		t.Fatal()
+	}
 
 	t.Run("success run GetById", func(t *testing.T) {
 		res, err := repo.GetById(1)

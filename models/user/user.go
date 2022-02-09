@@ -9,10 +9,11 @@ import (
 
 type User struct {
 	gorm.Model
-	Name     string      `json:"name" gorm:"not null;type:varchar(100)"`
-	Email    string      `json:"email" gorm:"unique;index;not null;type:varchar(100)"`
-	Password string      `json:"password" gorm:"unique;not null;type:varchar(100)"`
-	Tasks    []task.Task `json:"tasks" gorm:"foreignKey:User_ID"`
+
+	Name     string      `gorm:"not null;type:varchar(100)"`
+	Email    string      `gorm:"unique;index;not null;type:varchar(100)"`
+	Password string      `gorm:"unique;not null;type:varchar(100)"`
+	Tasks    []task.Task `gorm:"foreignKey:user_id"`
 }
 
 func (u *User) ToUserResponse() response.UserResponse {

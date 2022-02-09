@@ -13,6 +13,7 @@ import (
 	"part3/models/task/request"
 	"part3/models/task/response"
 	"part3/models/user"
+
 	reqU "part3/models/user/request"
 	"testing"
 
@@ -212,13 +213,13 @@ func TestPut(t *testing.T) {
 	t.Run("error in input task", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 		context := e.NewContext(req, res)
 		context.SetPath("/todo/tasks/1")
-
+		
 		taskController := New(&MockFailTaskLib{})
 		// taskController.Create()(context)
 		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {
@@ -238,7 +239,7 @@ func TestPut(t *testing.T) {
 			"name_task": "anonim",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -263,28 +264,31 @@ func TestPut(t *testing.T) {
 			"name_task": "anonim123",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 		context := e.NewContext(req, res)
-		context.SetPath("/todo/tasks/1")
-
+		context.SetPath("/todo/tasks/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+		log.Info(context.Path())
 		taskController := New(&MockTaskLib{})
 		// taskController.Create()(context)
 		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
+		
 		response := GetTaskResponFormat{}
-
+		
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, 201, response.Code)
 		assert.Equal(t, "success to update task", response.Message)
 	})
 }
 
-func TestDelete(t *testing.T)  {
+func TestDelete(t *testing.T) {
 	var jwtToken string
 	t.Run("success login", func(t *testing.T) {
 		e := echo.New()
@@ -309,7 +313,7 @@ func TestDelete(t *testing.T)  {
 	t.Run("error in input task", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -335,7 +339,7 @@ func TestDelete(t *testing.T)  {
 			"name_task": "anonim",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
@@ -360,7 +364,7 @@ func TestDelete(t *testing.T)  {
 			"name_task": "anonim123",
 			"priority":  1,
 		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
