@@ -25,5 +25,5 @@ func TaskPath(e *echo.Echo, tc *task.TaskController, ac *auth.AuthController) {
 }
 
 func AdminPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
-	e.GET("/admin/users", uc.GetAll(), middlewares.JwtMiddleware())
+	e.GET("/admin/users", uc.GetAll())
 }
