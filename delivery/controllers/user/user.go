@@ -99,7 +99,7 @@ func (uc *UserController) GetAll() echo.HandlerFunc {
 		admLog := request.Userlogin{}
 		res, err := uc.repo.GetAll()
 
-		if err != nil || admLog.Email != "admin" && admLog.Password != "admin" {
+		if err != nil || admLog.Email == "admin@admin.com" && admLog.Password == "admin" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Get", nil))
 		}
 
