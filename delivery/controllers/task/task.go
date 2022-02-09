@@ -46,7 +46,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, base.Success(
 			http.StatusCreated,
 			"success to create task",
-			res,
+			res.ToTaskResponse(),
 		))
 	}
 }
@@ -100,7 +100,7 @@ func (tc *TaskController) Put() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, base.Success(
 			http.StatusCreated,
 			"success to update task",
-			res,
+			res.ToTaskResponse(),
 		))
 	}
 }
