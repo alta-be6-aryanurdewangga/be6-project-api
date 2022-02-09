@@ -41,7 +41,16 @@ func TestCreate(t *testing.T) {
 func TestGetById(t *testing.T) {
 	confg := configs.GetConfig()
 	db := utils.InitDB(confg)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
 	repo := New(db)
+	mockCreate := project.Project{User_ID: 1, Name_Pro: "anonim"}
+	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+	if err != nil {
+		t.Fatal()
+	}
 
 	t.Run("success run GetById", func(t *testing.T) {
 		res, err := repo.GetById(1, 1)
@@ -60,7 +69,16 @@ func TestGetById(t *testing.T) {
 func TestUpdateById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
 	repo := New(db)
+	mockCreate := project.Project{User_ID: 1, Name_Pro: "anonim"}
+	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+	if err != nil {
+		t.Fatal()
+	}
 
 	t.Run("success run UpdateById", func(t *testing.T) {
 		mockPro := request.ProRequest{Name_Pro: "anonim321"}
@@ -79,7 +97,16 @@ func TestUpdateById(t *testing.T) {
 func TestDeleteById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
 	repo := New(db)
+	mockCreate := project.Project{User_ID: 1, Name_Pro: "anonim"}
+	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+	if err != nil {
+		t.Fatal()
+	}
 
 	t.Run("success run DeleteById", func(t *testing.T) {
 		res, err := repo.DeleteById(1, 1)
@@ -97,7 +124,16 @@ func TestDeleteById(t *testing.T) {
 func TestGetAll(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
 	repo := New(db)
+	mockCreate := project.Project{User_ID: 1, Name_Pro: "anonim"}
+	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+	if err != nil {
+		t.Fatal()
+	}
 
 	t.Run("success run GetAll", func(t *testing.T) {
 		res, err := repo.GetAll(1)
