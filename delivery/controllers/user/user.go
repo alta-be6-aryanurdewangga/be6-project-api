@@ -2,6 +2,7 @@ package user
 
 import (
 	"net/http"
+	"strconv"
 
 	"part3/delivery/middlewares"
 	"part3/lib/database/user"
@@ -56,17 +57,18 @@ func (uc *UserController) GetById() echo.HandlerFunc {
 
 func (uc *UserController) UpdateById() echo.HandlerFunc {
 	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
 		userid := int(middlewares.ExtractTokenId(c))
 		upUser := request.UserRegister{}
 
-		if err := c.Bind(&upUser); err != nil {
-			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Update", nil))
+		if err := c.Bind(&upUser); err != nil || upUser.Name == "" {
+			return c.JSON(http.StatusBadRequest, base.BadRequest(http.StatusBadRequest, "error in request Update", nil))
 		}
 
-		res, err := uc.repo.UpdateById(userid, upUser)
+		res, err := uc.repo.UpdateById(id, userid, upUser)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, base.InternalServerError(nil, "error in access Update", nil))
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(http.StatusInternalServerError, "error in access Update", nil))
 		}
 
 		return c.JSON(http.StatusOK, base.Success(http.StatusOK, "Success Update By Id", res))
@@ -75,17 +77,18 @@ func (uc *UserController) UpdateById() echo.HandlerFunc {
 
 func (uc *UserController) DeleteById() echo.HandlerFunc {
 	return func(c echo.Context) error {
+
 		userid := int(middlewares.ExtractTokenId(c))
 		upUser := request.UserRegister{}
 
-		if err := c.Bind(&upUser); err != nil {
-			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Delete", nil))
+		if err := c.Bind(&upUser); err != nil || upUser.Name == "" || upUser.Password == "" {
+			return c.JSON(http.StatusBadRequest, base.BadRequest(http.StatusBadRequest, "error in request Delete", nil))
 		}
 
 		res, err := uc.repo.DeleteById(userid)
 
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, base.InternalServerError(nil, "error in access Delete", nil))
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(http.StatusInternalServerError, "error in access Delete", nil))
 		}
 
 		return c.JSON(http.StatusOK, base.Success(http.StatusOK, "Success Delete By Id", res))

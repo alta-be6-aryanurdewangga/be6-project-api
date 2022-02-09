@@ -193,7 +193,7 @@ func TestGetById(t *testing.T) {
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		// log.Info(response)
-		assert.Equal(t, 400, response.Code)
+		assert.Equal(t, 500, response.Code)
 		assert.Equal(t, "error in access Get By id", response.Message)
 	})
 
@@ -230,7 +230,6 @@ func TestGetById(t *testing.T) {
 	})
 }
 
-//update by id belum yang fail
 func TestUpdateByID(t *testing.T) {
 	var jwtToken string
 
@@ -257,6 +256,68 @@ func TestUpdateByID(t *testing.T) {
 
 		assert.Equal(t, response.Message, "success login")
 		assert.NotNil(t, response.Data["token"])
+	})
+
+	t.Run("Error input Update", func(t *testing.T) {
+		e := echo.New()
+
+		reqBody, _ := json.Marshal(map[string]string{})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/users/:id")
+
+		userController := New(&MockFalseLib{})
+		if err := middlewares.JwtMiddleware()(userController.UpdateById())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetUserResponseFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		log.Info(response)
+		assert.Equal(t, 400, response.Code)
+		assert.Equal(t, "error in request Update", response.Message)
+
+		log.Info(response.Data)
+	})
+
+	t.Run("Error access Update", func(t *testing.T) {
+		e := echo.New()
+
+		reqBody, _ := json.Marshal(map[string]interface{}{
+			"name":     "anonim123",
+			"email":    "anonim@123",
+			"password": "anonim123",
+		})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/users/:id")
+
+		userController := New(&MockFalseLib{})
+		if err := middlewares.JwtMiddleware()(userController.UpdateById())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetUserResponseFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		log.Info(response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in access Update", response.Message)
+
+		log.Info(response.Data)
 	})
 
 	t.Run("Success Update", func(t *testing.T) {
@@ -322,10 +383,72 @@ func TestDeleteByID(t *testing.T) {
 		assert.NotNil(t, response.Data["token"])
 	})
 
+	t.Run("Fail to Delete", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]string{})
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/users/:id")
+
+		userController := New(&MockFalseLib{})
+		if err := middlewares.JwtMiddleware()(userController.DeleteById())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetUserResponseFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		log.Info(response)
+		assert.Equal(t, 400, response.Code)
+		assert.Equal(t, "error in request Delete", response.Message)
+
+	})
+
+	t.Run("Fail to access Delete", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]string{
+			"name":     "anonim123",
+			"email":    "anonim@123.com",
+			"password": "anonim123",
+		})
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/users/:id")
+
+		userController := New(&MockFalseLib{})
+		if err := middlewares.JwtMiddleware()(userController.DeleteById())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetUserResponseFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		log.Info(response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in access Delete", response.Message)
+
+	})
+
 	t.Run("Success Delete", func(t *testing.T) {
 		e := echo.New()
-
-		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(nil))
+		reqBody, _ := json.Marshal(map[string]string{
+			"name":     "anonim123",
+			"email":    "anonim@123.com",
+			"password": "anonim123",
+		})
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 
 		req.Header.Set("Content-Type", "application/json")
@@ -419,7 +542,7 @@ func TestGetAll(t *testing.T) {
 		context.SetPath("/users")
 
 		// userController := New(&MockFalseLib{})
-		userController := New(&MockUserLib{})
+		userController := New(&MockFalseLib{})
 
 		if err := middlewares.JwtMiddleware()(userController.GetAll())(context); err != nil {
 			log.Fatal(err)
@@ -454,7 +577,7 @@ func (m *MockUserLib) GetById(id int) ([]user.User, error) {
 	return []user.User{}, nil
 }
 
-func (m *MockUserLib) UpdateById(id int, upUser request.UserRegister) (user.User, error) {
+func (m *MockUserLib) UpdateById(id int, userid int, upUser request.UserRegister) (user.User, error) {
 	return user.User{Name: upUser.Name, Email: upUser.Email, Password: upUser.Password}, nil
 }
 
@@ -476,12 +599,12 @@ func (mf *MockFalseLib) Create(newUser user.User) (user.User, error) {
 	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
 
-func (mf *MockFalseLib) GetById() (user.User, error) {
-	return user.User{}, errors.New("False Object")
+func (mf *MockFalseLib) GetById(id int) ([]user.User, error) {
+	return []user.User{}, errors.New("False Object")
 }
 
-func (mf *MockFalseLib) UpdateById(id int, upUser request.UserRegister) ([]user.User, error) {
-	return nil, errors.New("False Object")
+func (mf *MockFalseLib) UpdateById(id int, userid int, upUser request.UserRegister) (user.User, error) {
+	return user.User{}, errors.New("False Object")
 }
 
 func (mf *MockFalseLib) DeleteById(id int) (gorm.DeletedAt, error) {
@@ -489,6 +612,6 @@ func (mf *MockFalseLib) DeleteById(id int) (gorm.DeletedAt, error) {
 	return user.DeletedAt, errors.New("False Object")
 }
 
-func (mf *MockFalseLib) GetAll() ([]user.User, error) {
-	return nil, errors.New("False Object")
+func (mf *MockFalseLib) GetAll() (user.User, error) {
+	return user.User{}, errors.New("False Object")
 }
