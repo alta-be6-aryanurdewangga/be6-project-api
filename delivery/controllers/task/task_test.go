@@ -219,7 +219,7 @@ func TestPut(t *testing.T) {
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 		context := e.NewContext(req, res)
 		context.SetPath("/todo/tasks/1")
-
+		
 		taskController := New(&MockFailTaskLib{})
 		// taskController.Create()(context)
 		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {
@@ -270,7 +270,7 @@ func TestPut(t *testing.T) {
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 		context := e.NewContext(req, res)
 		context.SetPath("/todo/tasks/1")
-
+		log.Info(context.Path())
 		taskController := New(&MockTaskLib{})
 		// taskController.Create()(context)
 		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {

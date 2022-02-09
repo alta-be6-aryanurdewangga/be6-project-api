@@ -2,7 +2,6 @@ package user
 
 import (
 	"net/http"
-	"strconv"
 
 	"part3/delivery/middlewares"
 	"part3/lib/database/user"
@@ -57,7 +56,6 @@ func (uc *UserController) GetById() echo.HandlerFunc {
 
 func (uc *UserController) UpdateById() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id, _ := strconv.Atoi(c.Param("id"))
 		userid := int(middlewares.ExtractTokenId(c))
 		upUser := request.UserRegister{}
 
@@ -65,7 +63,7 @@ func (uc *UserController) UpdateById() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(http.StatusBadRequest, "error in request Update", nil))
 		}
 
-		res, err := uc.repo.UpdateById(id, userid, upUser)
+		res, err := uc.repo.UpdateById(userid, upUser)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(http.StatusInternalServerError, "error in access Update", nil))
