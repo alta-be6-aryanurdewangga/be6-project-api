@@ -15,13 +15,15 @@ func GenerateToken(u user.User) (string, error) {
 	if u.ID == 0 {
 		return "cannot Generate token", errors.New("id == 0")
 	}
-	
+
 	codes := jwt.MapClaims{
-		"id":   u.ID,
-		"exp":  time.Now().Add(time.Hour * 1).Unix(),
-		"auth": true,
+		"id":       u.ID,
+		"name":     u.Name,
+		"password": u.Password,
+		"exp":      time.Now().Add(time.Hour * 1).Unix(),
+		"auth":     true,
 	}
-	
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, codes)
 	// fmt.Println(token)
 	return token.SignedString([]byte(configs.JWT_SECRET))

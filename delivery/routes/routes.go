@@ -15,3 +15,4 @@ func UserPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
 	e.PUT("/users/me", uc.UpdateById(),  middlewares.JwtMiddleware())
 	e.DELETE("/users/me", uc.DeleteById(),  middlewares.JwtMiddleware())
 }
+
