@@ -11,6 +11,7 @@ import (
 	"part3/delivery/middlewares"
 	"part3/models/user"
 	"part3/models/user/request"
+	"part3/models/user/response"
 
 	// lib "part3/lib/database/user"
 	"testing"
@@ -572,12 +573,12 @@ func (m *MockUserLib) Create(newUser user.User) (user.User, error) {
 	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
 
-func (m *MockUserLib) GetById(id int) ([]user.User, error) {
-	return []user.User{}, nil
+func (m *MockUserLib) GetById(id int) (user.User, error) {
+	return user.User{}, nil
 }
 
-func (m *MockUserLib) UpdateById(id int, userid int, upUser request.UserRegister) (user.User, error) {
-	return user.User{Name: upUser.Name, Email: upUser.Email, Password: upUser.Password}, nil
+func (m *MockUserLib) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
+	return user.User{Name: userReg.Name, Email: userReg.Email, Password: userReg.Password}, nil
 }
 
 func (m *MockUserLib) DeleteById(id int) (gorm.DeletedAt, error) {
@@ -585,8 +586,8 @@ func (m *MockUserLib) DeleteById(id int) (gorm.DeletedAt, error) {
 	return user.DeletedAt, nil
 }
 
-func (m *MockUserLib) GetAll() (user.User, error) {
-	return user.User{}, nil
+func (m *MockUserLib) GetAll() ([]response.UserResponse, error) {
+	return []response.UserResponse{}, nil
 }
 
 type MockFalseLib struct{}
@@ -598,11 +599,11 @@ func (mf *MockFalseLib) Create(newUser user.User) (user.User, error) {
 	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
 
-func (mf *MockFalseLib) GetById(id int) ([]user.User, error) {
-	return []user.User{}, errors.New("False Object")
+func (mf *MockFalseLib) GetById(id int) (user.User, error) {
+	return user.User{}, errors.New("False Object")
 }
 
-func (mf *MockFalseLib) UpdateById(id int, userid int, upUser request.UserRegister) (user.User, error) {
+func (mf *MockFalseLib) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
 	return user.User{}, errors.New("False Object")
 }
 
@@ -611,6 +612,6 @@ func (mf *MockFalseLib) DeleteById(id int) (gorm.DeletedAt, error) {
 	return user.DeletedAt, errors.New("False Object")
 }
 
-func (mf *MockFalseLib) GetAll() (user.User, error) {
-	return user.User{}, errors.New("False Object")
+func (mf *MockFalseLib) GetAll() ([]response.UserResponse, error) {
+	return []response.UserResponse{}, errors.New("False Object")
 }
