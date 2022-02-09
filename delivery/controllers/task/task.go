@@ -26,6 +26,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user_id := int(middlewares.ExtractTokenId(c))
 		newTask := request.TaskRequest{}
+
 		if err := c.Bind(&newTask); err != nil || newTask.Name_Task == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
@@ -37,6 +38,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 		res, err := tc.repo.Create(user_id, newTask.ToTask())
 
 		if err != nil {
+			log.Info(err)
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
 				http.StatusInternalServerError,
 				"error in database process",
