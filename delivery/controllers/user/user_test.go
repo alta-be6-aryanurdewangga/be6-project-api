@@ -3,6 +3,7 @@ package user
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -74,7 +75,37 @@ func TestCreate(t *testing.T) {
 		log.Info(response)
 
 		assert.Equal(t, 400, response.Code)
-		assert.Equal(t, "error to get by id", response.Message)
+		assert.Equal(t, "error in request Create", response.Message)
+
+	})
+
+	t.Run("Failed to Access", func(t *testing.T) {
+		e := echo.New()
+
+		reqBody, _ := json.Marshal(map[string]string{
+			"email":    "anonim",
+			"password": "anonim",
+		})
+
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/users")
+
+		userController := New(&MockUserLib{})
+		userController.Create()(context)
+
+		response := GetUserResponseFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		log.Info(response)
+
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in access Create", response.Message)
 
 	})
 
@@ -106,7 +137,6 @@ func TestCreate(t *testing.T) {
 	})
 }
 
-//get by id belum yang fail
 func TestGetById(t *testing.T) {
 	var jwtToken string
 
@@ -134,6 +164,38 @@ func TestGetById(t *testing.T) {
 		assert.Equal(t, response.Message, "success login")
 		assert.NotNil(t, response.Data["token"])
 	})
+
+	// t.Run("Success Get By Id", func(t *testing.T) {
+
+	// 	e := echo.New()
+	// 	// userid := int(middlewares.ExtractTokenId(c))
+
+	// 	req := httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer(nil))
+	// 	res := httptest.NewRecorder()
+
+	// 	req.Header.Set("Content-Type", "application/json")
+	// 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+	// 	context := e.NewContext(req, res)
+	// 	context.SetPath("/users/:id")
+	// 	log.Info(context)
+	// 	log.Info(req)
+	// 	log.Info(res)
+
+	// 	userController := New(&MockUserLib{})
+	// 	if err := middlewares.JwtMiddleware()(userController.GetById())(context); err != nil {
+	// 		log.Fatal(err)
+	// 		return
+	// 	}
+	// 	log.Info(userController)
+
+	// 	response := GetUserResponseFormat{}
+
+	// 	json.Unmarshal([]byte(res.Body.Bytes()), &response)
+	// 	// log.Info(response)
+	// 	assert.Equal(t, 200, response.Code)
+	// 	assert.Equal(t, response.Data, response.Data)
+	// })
 
 	t.Run("Success Get By Id", func(t *testing.T) {
 
@@ -325,7 +387,7 @@ func TestGetAll(t *testing.T) {
 	t.Run("Success Get All User", func(t *testing.T) {
 		e := echo.New()
 
-		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(nil))
+		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer(nil))
 		res := httptest.NewRecorder()
 
 		req.Header.Set("Content-Type", "application/json")
@@ -347,12 +409,43 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, 200, response.Code)
 		assert.Equal(t, "Success Get All User", response.Message)
 	})
+
+	t.Run("Failed Get All User", func(t *testing.T) {
+		// token := string(jwtToken)
+		e := echo.New()
+
+		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer(nil))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/users")
+
+		// userController := New(&MockFalseLib{})
+		userController := New(&MockUserLib{})
+
+		if err := middlewares.JwtMiddleware()(userController.GetAll())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetUserResponseFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		log.Info(response)
+		assert.Equal(t, 400, response.Code)
+		assert.Equal(t, "error in request Get", response.Message)
+	})
 }
 
 type MockUserLib struct{}
 
 func (m *MockUserLib) Create(newUser user.User) (user.User, error) {
-
+	if newUser.Email != "anonim123" && newUser.Password != "anonim123" {
+		return user.User{}, errors.New("record not found")
+	}
 	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
 
@@ -377,4 +470,10 @@ type MockAuthLib struct{}
 
 func (ma *MockAuthLib) Login(UserLogin request.Userlogin) (user.User, error) {
 	return user.User{Model: gorm.Model{ID: 1}, Email: UserLogin.Email, Password: UserLogin.Password}, nil
+}
+
+type MockFalseLib struct{}
+
+func (mf *MockFalseLib) GetAll() ([]user.User, error) {
+	return nil, errors.New("False Object")
 }

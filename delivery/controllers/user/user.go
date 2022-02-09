@@ -100,9 +100,9 @@ func (uc *UserController) DeleteById() echo.HandlerFunc {
 
 func (uc *UserController) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		allUser := users{}
+		// userid := int(middlewares.ExtractTokenId(c))
 
-		res, err := uc.repo.GetAll(allUser)
+		res, err := uc.repo.GetAll()
 
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Get", nil))
