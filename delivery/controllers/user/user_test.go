@@ -31,11 +31,10 @@ func TestCreate(t *testing.T) {
 			"password": "anonim123",
 		})
 
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
 		context := e.NewContext(req, res)
-		context.SetPath("/login")
 
 		authController := auth.New(&MockAuthLib{})
 		authController.Login()(context)
