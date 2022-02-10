@@ -45,7 +45,17 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 			))
 		}
 
-		res, err := tc.repo.Create(user_id, newTask.ToTask())
+		resC, err := tc.repo.Create(user_id, newTask.ToTask())
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
+
+		res, err := tc.repo.GetByIdResp(int(resC.ID), user_id)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
@@ -58,7 +68,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, base.Success(
 			http.StatusCreated,
 			"success to create task",
-			res.ToTaskResponse(),
+			res,
 		))
 	}
 }
@@ -94,14 +104,6 @@ func (tc *TaskController) Put() echo.HandlerFunc {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
 				"error in input task",
-				nil,
-			))
-		}
-
-		if _, err := tc.proLib.GetById(int(upTask.Project_id), user_id); err != nil {
-			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
-				http.StatusInternalServerError,
-				"error in database process",
 				nil,
 			))
 		}
