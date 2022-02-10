@@ -128,7 +128,6 @@ func TestCreate(t *testing.T) {
 		response := GetUserResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
-		log.Info(response)
 		assert.Equal(t, 201, response.Code)
 		assert.Equal(t, "anonim123", response.Data.Name)
 	})
