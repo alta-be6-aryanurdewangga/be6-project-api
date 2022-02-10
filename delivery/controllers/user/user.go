@@ -6,7 +6,6 @@ import (
 	"part3/delivery/middlewares"
 	"part3/lib/database/user"
 	"part3/models/base"
-	userMod "part3/models/user"
 	"part3/models/user/request"
 
 	"github.com/labstack/echo/v4"
@@ -15,25 +14,11 @@ import (
 
 type UserController struct {
 	repo user.User
-	userMod userMod.UserMod
-	userReq request.UserReq
 }
 
 func New(repository user.User) *UserController {
 	return &UserController{
 		repo: repository,
-	}
-}
-
-func NewUserMod(userMod userMod.UserMod) *UserController {
-	return &UserController{
-		userMod: userMod,
-	}
-}
-
-func NewUserReq(userReq request.UserReq) *UserController {
-	return &UserController{
-		userReq: userReq,
 	}
 }
 
@@ -92,11 +77,6 @@ func (uc *UserController) DeleteById() echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		userid := int(middlewares.ExtractTokenId(c))
-		upUser := request.UserRegister{}
-
-		if err := c.Bind(&upUser); err != nil || upUser.Name == "" || upUser.Password == "" {
-			return c.JSON(http.StatusBadRequest, base.BadRequest(http.StatusBadRequest, "error in request Delete", nil))
-		}
 
 		res, err := uc.repo.DeleteById(userid)
 
@@ -110,12 +90,12 @@ func (uc *UserController) DeleteById() echo.HandlerFunc {
 
 func (uc *UserController) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// userid := int(middlewares.ExtractTokenId(c))
-		// email :=
-		admLog := request.Userlogin{}
-		res, err := uc.repo.GetAll()
 
-		if err != nil || admLog.Email == "admin" && admLog.Password == "admin" {
+		res, err := uc.repo.GetAll()
+		email := middlewares.ExtractTokenAdmin(c)[0]
+		password := middlewares.ExtractTokenAdmin(c)[1]
+
+		if err != nil || email != "admin" && password != "admin" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Get", nil))
 		}
 

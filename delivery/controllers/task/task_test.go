@@ -4,14 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"part3/configs"
 	"part3/delivery/controllers/auth"
-	"part3/delivery/middlewares"
-	proDB "part3/lib/database/project"
-	taskDB "part3/lib/database/task"
 	proMod "part3/models/project"
 	proReq "part3/models/project/request"
 	proResp "part3/models/project/response"
@@ -20,11 +15,9 @@ import (
 	"part3/models/task/response"
 	"part3/models/user"
 	reqU "part3/models/user/request"
-	"part3/utils"
 	"testing"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -100,33 +93,31 @@ func TestCreate(t *testing.T) {
 	// 	assert.Equal(t, "error in database process", response.Message)
 	// })
 
-	t.Run("success to create task", func(t *testing.T) {
-		e := echo.New()
-		reqBody, _ := json.Marshal(map[string]interface{}{
-			"name_task":  "anonim123",
-			"priority":   1,
-			"project_id": 5,
-		})
-		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
-		res := httptest.NewRecorder()
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
-		context := e.NewContext(req, res)
-		context.SetPath("/todo/tasks")
-		config := configs.GetConfig()
-		db := utils.InitDB(config)
-		taskController := New(taskDB.New(db), proDB.New(db))
-		// taskController.Create()(context)
-		if err := middlewares.JwtMiddleware()(taskController.Create())(context); err != nil {
-			log.Fatal(err)
-			return
-		}
-		response := GetTaskResponFormat{}
+	// 	t.Run("success to create task", func(t *testing.T) {
+	// 		e := echo.New()
+	// 		reqBody, _ := json.Marshal(map[string]interface{}{
+	// 			"name_task":  "anonim123",
+	// 			"priority":   1,
+	// 			"project_id": 5,
+	// 		})
+	// 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+	// 		res := httptest.NewRecorder()
+	// 		req.Header.Set("Content-Type", "application/json")
+	// 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+	// 		context := e.NewContext(req, res)
+	// 		context.SetPath("/todo/tasks")
+	// 		taskController := New(taskDB.New(db), proDB.New(db))
+	// 		// taskController.Create()(context)
+	// 		if err := middlewares.JwtMiddleware()(taskController.Create())(context); err != nil {
+	// 			log.Fatal(err)
+	// 			return
+	// 		}
+	// 		response := GetTaskResponFormat{}
 
-		json.Unmarshal([]byte(res.Body.Bytes()), &response)
-		assert.Equal(t, 201, response.Code)
-		assert.Equal(t, "success to create task", response.Message)
-	})
+	// 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+	// 		assert.Equal(t, 201, response.Code)
+	// 		assert.Equal(t, "success to create task", response.Message)
+	// 	})
 }
 
 // func TestGetAll(t *testing.T) {

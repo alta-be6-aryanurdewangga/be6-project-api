@@ -7,7 +7,8 @@ type TaskResponse struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 
-	Name_Task  string `json:"name_task"`
-	Priority   int    `json:"priority"`
-	Project_id int    `json:"project_id"`
+	Name         string `json:"name"`
+	Priority     int    `json:"priority"`
+	Project_id   int    `json:"project_id"`
+	Project_name string `json:"project_name"`
 }

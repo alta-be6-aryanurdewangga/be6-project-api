@@ -9,18 +9,17 @@ import (
 	"part3/models/task/request"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type TaskController struct {
-	repo    task.Task
-	proLib  project.Project
+	repo   task.Task
+	proLib project.Project
 }
 
 func New(repository task.Task, proLib project.Project) *TaskController {
 	return &TaskController{
-		repo:    repository,
-		proLib:  proLib,
+		repo:   repository,
+		proLib: proLib,
 	}
 }
 
@@ -37,12 +36,6 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 			))
 		}
 
-		log.Info(tc.proLib)
-		log.Info(newTask.Project_id)
-		log.Info(tc.proLib.GetById(int(newTask.Project_id), user_id))
-		if tc.proLib == nil {
-			log.Fatal()
-		}
 		if _, err := tc.proLib.GetById(int(newTask.Project_id), user_id); err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
 				http.StatusInternalServerError,

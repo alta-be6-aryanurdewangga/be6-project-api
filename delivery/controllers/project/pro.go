@@ -5,7 +5,6 @@ import (
 	"part3/delivery/middlewares"
 	"part3/lib/database/project"
 	"part3/models/base"
-	proMod "part3/models/project"
 	"part3/models/project/request"
 	"strconv"
 
@@ -13,26 +12,12 @@ import (
 )
 
 type ProController struct {
-	repo   project.Project
-	proMod proMod.ProMod
-	proReq request.ProReq
+	repo project.Project
 }
 
 func NewRepo(repo project.Project) *ProController {
 	return &ProController{
 		repo: repo,
-	}
-}
-
-func NewProMod(proMod proMod.ProMod) *ProController {
-	return &ProController{
-		proMod: proMod,
-	}
-}
-
-func NewProReq(proReq request.ProReq) *ProController {
-	return &ProController{
-		proReq: proReq,
 	}
 }
 
@@ -125,4 +110,3 @@ func (pc *ProController) Delete() echo.HandlerFunc {
 		))
 	}
 }
-

@@ -12,8 +12,6 @@ import (
 	"part3/models/user"
 	"part3/models/user/request"
 	"part3/models/user/response"
-
-	// lib "part3/lib/database/user"
 	"testing"
 
 	"github.com/labstack/echo/v4"

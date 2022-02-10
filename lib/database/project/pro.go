@@ -40,7 +40,7 @@ func (pd *ProDb) UpdateById(id int, user_id int, upPro request.ProRequest) (proj
 		return project.Project{}, err
 	}
 
-	pd.db.Model(project.Project{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(project.Project{Name_Pro: upPro.Name_Pro})
+	pd.db.Model(project.Project{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(project.Project{Name: upPro.Name})
 
 	pro := upPro.ToProject()
 
