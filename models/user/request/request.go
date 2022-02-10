@@ -15,3 +15,11 @@ func (u *UserRegister) ToUser() user.User {
 		Password: u.Password,
 	}
 }
+
+func (u *UserRegister) ToUserCont(name string, email string, password string) user.User {
+	return user.User{
+		Name:     name,
+		Email:    email,
+		Password: password,
+	}
+}

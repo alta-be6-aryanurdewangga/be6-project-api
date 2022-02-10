@@ -19,7 +19,7 @@ func UserPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
 
 func TaskPath(e *echo.Echo, tc *task.TaskController, ac *auth.AuthController) {
 	e.POST("/todo/tasks", tc.Create(), middlewares.JwtMiddleware())
-	e.GET("/todo/tasks/", tc.GetAll(), middlewares.JwtMiddleware())
+	e.GET("/todo/tasks", tc.GetAll(), middlewares.JwtMiddleware())
 	e.PUT("/todo/tasks/:id", tc.Put(), middlewares.JwtMiddleware())
 	e.DELETE("/todo/tasks/:id", tc.Delete(), middlewares.JwtMiddleware())
 }
