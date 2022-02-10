@@ -7,6 +7,7 @@ import (
 	"part3/lib/database/task"
 	"part3/models/base"
 	"part3/models/task/request"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -28,7 +29,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 		user_id := int(middlewares.ExtractTokenId(c))
 		newTask := request.TaskRequest{}
 
-		if err := c.Bind(&newTask); err != nil || newTask.Name_Task == "" {
+		if err := c.Bind(&newTask); err != nil || newTask.Name == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
 				"error in input task",
@@ -62,87 +63,87 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 	}
 }
 
-// func (tc *TaskController) GetAll() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		user_id := int(middlewares.ExtractTokenId(c))
+func (tc *TaskController) GetAll() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user_id := int(middlewares.ExtractTokenId(c))
 
-// 		res, err := tc.repo.GetAll(user_id)
+		res, err := tc.repo.GetAll(user_id)
 
-// 		if err != nil {
-// 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
-// 				http.StatusInternalServerError,
-// 				"error in database process",
-// 				nil,
-// 			))
-// 		}
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
 
-// 		return c.JSON(http.StatusCreated, base.Success(
-// 			http.StatusCreated,
-// 			"success to get all task",
-// 			res,
-// 		))
-// 	}
-// }
+		return c.JSON(http.StatusOK, base.Success(
+			http.StatusOK,
+			"success to get all task",
+			res,
+		))
+	}
+}
 
-// func (tc *TaskController) Put() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		id, _ := strconv.Atoi(c.Param("id"))
-// 		user_id := int(middlewares.ExtractTokenId(c))
-// 		upTask := request.TaskRequest{}
-// 		if err := c.Bind(&upTask); err != nil || upTask.Name_Task == "" {
-// 			return c.JSON(http.StatusBadRequest, base.BadRequest(
-// 				http.StatusBadRequest,
-// 				"error in input task",
-// 				nil,
-// 			))
-// 		}
+func (tc *TaskController) Put() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+		user_id := int(middlewares.ExtractTokenId(c))
+		upTask := request.TaskRequest{}
+		if err := c.Bind(&upTask); err != nil || upTask.Name == "" {
+			return c.JSON(http.StatusBadRequest, base.BadRequest(
+				http.StatusBadRequest,
+				"error in input task",
+				nil,
+			))
+		}
 
-// 		res, err := tc.repo.UpdateById(id, user_id, upTask)
+		if _, err := tc.proLib.GetById(int(upTask.Project_id), user_id); err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
 
-// 		if err != nil {
-// 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
-// 				http.StatusInternalServerError,
-// 				"error in database process",
-// 				nil,
-// 			))
-// 		}
+		res, err := tc.repo.UpdateById(id, user_id, upTask)
 
-// 		return c.JSON(http.StatusCreated, base.Success(
-// 			http.StatusCreated,
-// 			"success to update task",
-// 			res.ToTaskResponse(),
-// 		))
-// 	}
-// }
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
 
-// func (tc *TaskController) Delete() echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		id, _ := strconv.Atoi(c.Param("id"))
+		return c.JSON(http.StatusOK, base.Success(
+			http.StatusOK,
+			"success to update task",
+			res.ToTaskResponse(),
+		))
+	}
+}
 
-// 		user_id := int(middlewares.ExtractTokenId(c))
-// 		upTask := request.TaskRequest{}
-// 		if err := c.Bind(&upTask); err != nil || upTask.Name_Task == "" {
-// 			return c.JSON(http.StatusBadRequest, base.BadRequest(
-// 				http.StatusBadRequest,
-// 				"error in input task",
-// 				nil,
-// 			))
-// 		}
+func (tc *TaskController) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
 
-// 		res, err := tc.repo.DeleteById(id, user_id)
+		user_id := int(middlewares.ExtractTokenId(c))
 
-// 		if err != nil {
-// 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
-// 				http.StatusInternalServerError,
-// 				"error in database process",
-// 				nil,
-// 			))
-// 		}
+		res, err := tc.repo.DeleteById(id, user_id)
 
-// 		return c.JSON(http.StatusCreated, base.Success(
-// 			http.StatusCreated,
-// 			"success to delete task",
-// 			res,
-// 		))
-// 	}
-// }
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
+
+		return c.JSON(http.StatusOK, base.Success(
+			http.StatusOK,
+			"success to delete task",
+			res,
+		))
+	}
+}
