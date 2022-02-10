@@ -24,10 +24,10 @@ func main() {
 
 	userRepo := _userDb.New(db)
 	userController := user.New(userRepo)
-	taskRepo := _taskDB.New(db)
-	taskController := task.New(taskRepo)
 	proRepo := _proDb.New(db)
 	proController := project.NewRepo(proRepo)
+	taskRepo := _taskDB.New(db)
+	taskController := task.New(taskRepo,proRepo)
 	authRepo := _authDb.New(db)
 	authController := auth.New(authRepo)
 
