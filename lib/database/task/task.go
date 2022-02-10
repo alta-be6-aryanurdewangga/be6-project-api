@@ -64,7 +64,7 @@ func (bd *TaskDb) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 func (bd *TaskDb) GetAll(user_id int) ([]response.TaskResponse, error) {
 	taskRespArr := []response.TaskResponse{}
 
-	if err := bd.db.Model(task.Task{}).Where("user_id = ?", user_id).Limit(5).Find(&taskRespArr).Error; err != nil {
+	if err := bd.db.Model(task.Task{}).Where("user_id = ?", user_id).Find(&taskRespArr).Error; err != nil {
 		return nil, err
 	}
 

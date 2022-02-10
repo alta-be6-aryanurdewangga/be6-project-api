@@ -6,13 +6,17 @@ import (
 	"part3/delivery/middlewares"
 	"part3/lib/database/user"
 	"part3/models/base"
+	userMod "part3/models/user"
 	"part3/models/user/request"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type UserController struct {
 	repo user.User
+	userMod userMod.UserMod
+	userReq request.UserReq
 }
 
 func New(repository user.User) *UserController {
@@ -21,21 +25,32 @@ func New(repository user.User) *UserController {
 	}
 }
 
+func NewUserMod(userMod userMod.UserMod) *UserController {
+	return &UserController{
+		userMod: userMod,
+	}
+}
+
+func NewUserReq(userReq request.UserReq) *UserController {
+	return &UserController{
+		userReq: userReq,
+	}
+}
+
 func (uc *UserController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		newUser := request.UserRegister{}
-
 		if err := c.Bind(&newUser); err != nil || newUser.Email == "" || newUser.Password == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Create", nil))
 		}
-
+		log.Info(newUser.Name, newUser.Email, newUser.Password)
 		res, err := uc.repo.Create(newUser.ToUser())
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(nil, "error in access Create", nil))
 		}
-
-		return c.JSON(http.StatusCreated, base.Success(http.StatusCreated, "Success Create", res))
+		log.Info(res)
+		return c.JSON(http.StatusCreated, base.Success(http.StatusCreated, "Success Create", res.ToUserResponse()))
 	}
 }
 

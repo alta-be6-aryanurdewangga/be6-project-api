@@ -72,7 +72,6 @@ func TestCreate(t *testing.T) {
 		response := GetUserResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
-		log.Info(response)
 
 		assert.Equal(t, 400, response.Code)
 		assert.Equal(t, "error in request Create", response.Message)

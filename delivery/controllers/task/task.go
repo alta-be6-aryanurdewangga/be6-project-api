@@ -14,6 +14,7 @@ import (
 
 type TaskController struct {
 	repo task.Task
+	taskReq *request.TaskReq
 }
 
 func New(repository task.Task) *TaskController {
@@ -22,11 +23,17 @@ func New(repository task.Task) *TaskController {
 	}
 }
 
+func NewTaskReq(taskReq1 request.TaskReq) *TaskController {
+	return &TaskController{
+		taskReq: &taskReq1,
+	}
+}
+
 func (tc *TaskController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user_id := int(middlewares.ExtractTokenId(c))
 		newTask := request.TaskRequest{}
-
+		
 		if err := c.Bind(&newTask); err != nil || newTask.Name_Task == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
@@ -34,7 +41,11 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 				nil,
 			))
 		}
-
+		newTaskMoc := TaskRequest{Name_Task: newTask.Name_Task, Priority: newTask.Priority}
+		log.Info(newTaskMoc)
+		log.Info(tc)
+		log.Info(tc.repo)
+		log.Info(tc.taskReq)
 		res, err := tc.repo.Create(user_id, newTask.ToTask())
 
 		if err != nil {
@@ -79,8 +90,6 @@ func (tc *TaskController) GetAll() echo.HandlerFunc {
 func (tc *TaskController) Put() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-		log.Info(c.Path())
-		log.Info(id)
 		user_id := int(middlewares.ExtractTokenId(c))
 		upTask := request.TaskRequest{}
 		if err := c.Bind(&upTask); err != nil || upTask.Name_Task == "" {
@@ -104,7 +113,7 @@ func (tc *TaskController) Put() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, base.Success(
 			http.StatusCreated,
 			"success to update task",
-			res,
+			res.ToTaskResponse(),
 		))
 	}
 }

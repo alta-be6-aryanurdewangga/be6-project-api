@@ -1,0 +1,17 @@
+mode: set
+part3/lib/database/project/pro.go:15.30,17.2 1 1
+part3/lib/database/project/pro.go:19.87,20.82 1 1
+part3/lib/database/project/pro.go:23.2,23.20 1 1
+part3/lib/database/project/pro.go:20.82,22.3 1 1
+part3/lib/database/project/pro.go:26.72,29.105 2 1
+part3/lib/database/project/pro.go:32.2,32.17 1 1
+part3/lib/database/project/pro.go:29.105,31.3 1 1
+part3/lib/database/project/pro.go:35.101,38.16 2 1
+part3/lib/database/project/pro.go:42.2,46.17 3 1
+part3/lib/database/project/pro.go:38.16,40.3 1 1
+part3/lib/database/project/pro.go:49.74,52.16 3 1
+part3/lib/database/project/pro.go:56.2,58.27 2 1
+part3/lib/database/project/pro.go:52.16,54.3 1 1
+part3/lib/database/project/pro.go:61.70,64.110 2 1
+part3/lib/database/project/pro.go:68.2,68.24 1 1
+part3/lib/database/project/pro.go:64.110,66.3 1 1

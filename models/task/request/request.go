@@ -13,3 +13,18 @@ func (t *TaskRequest) ToTask() task.Task {
 		Priority:  t.Priority,
 	}
 }
+
+
+func (t *TaskRequest) ToTaskCont(name string, pri int) *task.Task {
+	return &task.Task{
+		Name_Task: name,
+		Priority: pri,
+	}
+}
+
+func (t *TaskRequest) ToTaskCont1(name string, pri int) *task.Task {
+	return &task.Task{
+		Name_Task: name,
+		Priority: pri,
+	}
+}
