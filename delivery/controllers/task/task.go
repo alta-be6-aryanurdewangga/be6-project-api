@@ -14,7 +14,7 @@ import (
 
 type TaskController struct {
 	repo task.Task
-	taskReq request.TaskReq
+	taskReq *request.TaskReq
 }
 
 func New(repository task.Task) *TaskController {
@@ -25,7 +25,7 @@ func New(repository task.Task) *TaskController {
 
 func NewTaskReq(taskReq1 request.TaskReq) *TaskController {
 	return &TaskController{
-		taskReq: taskReq1,
+		taskReq: &taskReq1,
 	}
 }
 
