@@ -96,7 +96,7 @@ func (uc *UserController) DeleteById() echo.HandlerFunc {
 func (uc *UserController) GetAll() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// userid := int(middlewares.ExtractTokenId(c))
-		// email := 
+		// email :=
 		admLog := request.Userlogin{}
 		res, err := uc.repo.GetAll()
 
