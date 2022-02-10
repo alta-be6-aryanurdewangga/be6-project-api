@@ -9,7 +9,6 @@ import (
 	"part3/models/user/request"
 
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type UserController struct {
@@ -28,13 +27,11 @@ func (uc *UserController) Create() echo.HandlerFunc {
 		if err := c.Bind(&newUser); err != nil || newUser.Email == "" || newUser.Password == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in request Create", nil))
 		}
-		log.Info(newUser.Name, newUser.Email, newUser.Password)
 		res, err := uc.repo.Create(newUser.ToUser())
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(nil, "error in access Create", nil))
 		}
-		log.Info(res)
 		return c.JSON(http.StatusCreated, base.Success(http.StatusCreated, "Success Create", res.ToUserResponse()))
 	}
 }
