@@ -49,7 +49,7 @@ func (tc *TaskController) Create() echo.HandlerFunc {
 		return c.JSON(http.StatusCreated, base.Success(
 			http.StatusCreated,
 			"success to create task",
-			res,
+			res.ToTaskResponse(),
 		))
 	}
 }

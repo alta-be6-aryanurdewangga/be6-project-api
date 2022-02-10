@@ -8,6 +8,7 @@ import (
 	"part3/utils"
 	"testing"
 
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -26,6 +27,10 @@ func TestCreate(t *testing.T) {
 		res, err := repo.Create(mocUser)
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
+		assert.Equal(t, "anonim123", res.Name)
+		assert.Equal(t, "anonim@123", res.Email)
+		assert.Equal(t, "anonim123", res.Password)
+
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {
@@ -51,6 +56,7 @@ func TestGetById(t *testing.T) {
 		res, err := repo.GetById(1)
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
+
 	})
 
 	t.Run("fail run GetById", func(t *testing.T) {
@@ -68,13 +74,18 @@ func TestUpdateById(t *testing.T) {
 	t.Run("success run UpdateById", func(t *testing.T) {
 		mockUser := request.UserRegister{Name: "anonim321", Email: "anonim@321", Password: "anonim321"}
 		res, err := repo.UpdateById(1, mockUser)
+		log.Info(res)
 		assert.Nil(t, err)
 		assert.Equal(t, "anonim321", res.Name)
+		assert.Equal(t, "anonim@321", res.Email)
+		assert.Equal(t, "anonim321", res.Password)
 	})
 
 	t.Run("fail run UpdateById", func(t *testing.T) {
 		mockUser := request.UserRegister{Name: "anonim456", Email: "anonim@456", Password: "456"}
 		res, err := repo.UpdateById(2, mockUser)
+		log.Info(mockUser)
+		log.Info(res)
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})

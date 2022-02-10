@@ -9,6 +9,7 @@ import (
 	"part3/utils"
 	"testing"
 
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -34,6 +35,8 @@ func TestCreate(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
 		assert.Equal(t, 1, int(res.User_ID))
+		assert.Equal(t, "anonim123", res.Name_Task)
+		assert.Equal(t, 1, int(res.Priority))
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {
@@ -69,14 +72,17 @@ func TestUpdateById(t *testing.T) {
 
 	t.Run("success run UpdateById", func(t *testing.T) {
 		mockTask := request.TaskRequest{Name_Task: "anonim321", Priority: 2}
-		res, err := repo.UpdateById(1,1, mockTask)
+		res, err := repo.UpdateById(1, 1, mockTask)
+		log.Info(res)
 		assert.Nil(t, err)
 		assert.Equal(t, "anonim321", res.Name_Task)
+		assert.Equal(t, 2, int(res.Priority))
 	})
 
 	t.Run("fail run UpdateById", func(t *testing.T) {
 		mockTask := request.TaskRequest{Name_Task: "anonim321", Priority: 2}
-		res, err := repo.UpdateById(2,1, mockTask)
+		res, err := repo.UpdateById(2, 1, mockTask)
+		log.Info(res)
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})
