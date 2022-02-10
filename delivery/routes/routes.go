@@ -34,7 +34,6 @@ func ProjectPath(e *echo.Echo, pc *project.ProController) {
 	e.DELETE("/projects/:id", pc.Delete(), middlewares.JwtMiddleware())
 }
 
-
 func AdminPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
-	e.GET("/admin/users", uc.GetAll())
+	e.GET("/admin/users", uc.GetAll(), middlewares.JwtMiddleware())
 }
