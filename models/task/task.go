@@ -6,20 +6,20 @@ import (
 	"gorm.io/gorm"
 )
 
-
-
 type Task struct {
 	gorm.Model
 
-	User_ID   uint   
-	Name_Task string `gorm:"not null;type:varchar(100)"`
-	Priority  int    `gorm:"not null;indext;type:int"`
+	User_ID    uint
+	Name       string `gorm:"not null;type:varchar(100)"`
+	Priority   int    `gorm:"not null;index;type:int"`
+	Project_id uint   `gorm:"not null"`
 }
 
 func (t *Task) ToTaskResponse() response.TaskResponse {
 	return response.TaskResponse{
-		ID:        t.ID,
-		Name_Task: t.Name_Task,
-		Priority:  t.Priority,
+		ID:         t.ID,
+		Name:       t.Name,
+		Priority:   t.Priority,
+		Project_id: int(t.Project_id),
 	}
 }

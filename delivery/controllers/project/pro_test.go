@@ -46,7 +46,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("error in input project", func(t *testing.T) {
 		e := echo.New()
-		reqBody, _ := json.Marshal(map[string]int{"name_pro": 1})
+		reqBody, _ := json.Marshal(map[string]int{"name": 1})
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content=Type", "application/json")
@@ -68,7 +68,7 @@ func TestCreate(t *testing.T) {
 	t.Run("error in database process", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{
-			"name_pro": "anonim",
+			"name": "anonim",
 		})
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
@@ -93,7 +93,7 @@ func TestCreate(t *testing.T) {
 	t.Run("success to create project", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{
-			"name_pro": "anonim",
+			"name": "anonim",
 		})
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
@@ -182,7 +182,7 @@ func TestGetAll(t *testing.T) {
 	})
 }
 
-func TestPut(t *testing.T)  {
+func TestPut(t *testing.T) {
 	var jwtToken string
 	t.Run("success login", func(t *testing.T) {
 		e := echo.New()
@@ -225,7 +225,129 @@ func TestPut(t *testing.T)  {
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, 400, response.Code)
-		assert.Equal(t, "error in input task", response.Message)
+		assert.Equal(t, "error in input project", response.Message)
+	})
+
+	t.Run("error in database proses", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{
+			"name": "anonim",
+		})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/:id")
+		// context.SetParamNames("id")
+		// context.SetParamValues("1")
+		log.Info(context.Path())
+		ProkController := NewRepo(&MockFailProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(ProkController.Put())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetRespFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in database proces", response.Message)
+	})
+
+	t.Run("success to update project", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{
+			"name": "anonim123",
+		})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+		log.Info(context.Path())
+		ProkController := NewRepo(&MockProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(ProkController.Put())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetRespFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 201, response.Code)
+		assert.Equal(t, "success to update project", response.Message)
+	})
+}
+
+func TestDelete(t *testing.T) {
+	var jwtToken string
+	t.Run("success login", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]string{
+			"email":    "anonim@123",
+			"password": "anonim123",
+		})
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		context := e.NewContext(req, res)
+		context.SetPath("/login")
+		authController := auth.New(&MockAuthLib{})
+		authController.Login()(context)
+		response := auth.LoginRespFormat{}
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		jwtToken = response.Data["token"].(string)
+		assert.Equal(t, 200, response.Code)
+		assert.NotNil(t, response.Data["token"])
+	})
+
+	t.Run("error in database process", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(nil))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/1")
+		taskController := NewRepo(&MockFailProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(taskController.Delete())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+		response := GetRespFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in database process", response.Message)
+	})
+
+	t.Run("success to delete project", func(t *testing.T) {
+		e := echo.New()
+		req := httptest.NewRequest(http.MethodDelete, "/", bytes.NewBuffer(nil))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/1")
+
+		taskController := NewRepo(&MockProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(taskController.Delete())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+		response := GetRespFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 200, response.Code)
+		assert.Equal(t, "success to delete project", response.Message)
 	})
 }
 
@@ -238,7 +360,7 @@ func (m *MockAuthLib) Login(UserLogin reqU.Userlogin) (user.User, error) {
 type MockProLib struct{}
 
 func (m *MockProLib) Create(user_id int, newPro proMod.Project) (proMod.Project, error) {
-	return proMod.Project{User_ID: uint(user_id), Name_Pro: newPro.Name_Pro}, nil
+	return proMod.Project{User_ID: uint(user_id), Name: newPro.Name}, nil
 }
 
 func (m *MockProLib) GetAll(user_id int) ([]response.ProResponse, error) {
@@ -246,7 +368,16 @@ func (m *MockProLib) GetAll(user_id int) ([]response.ProResponse, error) {
 }
 
 func (m *MockProLib) UpdateById(id int, user_id int, upPro request.ProRequest) (proMod.Project, error) {
-	return proMod.Project{User_ID: uint(user_id), Name_Pro: upPro.Name_Pro}, nil
+	return proMod.Project{User_ID: uint(user_id), Name: upPro.Name}, nil
+}
+
+func (m *MockProLib) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
+	pro := proMod.Project{}
+	return pro.DeletedAt, nil
+}
+
+func (m *MockProLib) GetById(id int, user_id int) (proMod.Project, error) {
+	return proMod.Project{}, nil
 }
 
 type MockFailProLib struct{}
@@ -260,6 +391,14 @@ func (m *MockFailProLib) GetAll(user_id int) ([]response.ProResponse, error) {
 }
 
 func (m *MockFailProLib) UpdateById(id int, user_id int, upPro request.ProRequest) (proMod.Project, error) {
-	return proMod.Project{User_ID: uint(user_id), Name_Pro: upPro.Name_Pro}, errors.New("error in call database")
+	return proMod.Project{User_ID: uint(user_id), Name: upPro.Name}, errors.New("error in call database")
 }
 
+func (m *MockFailProLib) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
+	pro := proMod.Project{}
+	return pro.DeletedAt, errors.New("error in database process")
+}
+
+func (m *MockFailProLib) GetById(id int, user_id int) (proMod.Project, error) {
+	return proMod.Project{}, nil
+}

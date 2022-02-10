@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"errors"
-	"fmt"
 	"part3/configs"
 	"part3/models/user"
 	"time"
@@ -18,7 +17,7 @@ func GenerateToken(u user.User) (string, error) {
 
 	codes := jwt.MapClaims{
 		"id":       u.ID,
-		"name":     u.Name,
+		"email":     u.Email,
 		"password": u.Password,
 		"exp":      time.Now().Add(time.Hour * 1).Unix(),
 		"auth":     true,
@@ -29,13 +28,23 @@ func GenerateToken(u user.User) (string, error) {
 	return token.SignedString([]byte(configs.JWT_SECRET))
 }
 
-func ExtractTokenId(e echo.Context) (float64) {
+func ExtractTokenId(e echo.Context) float64 {
 	user := e.Get("user").(*jwt.Token) //convert to jwt token from interface
 	if user.Valid {
 		codes := user.Claims.(jwt.MapClaims)
-		fmt.Println(codes)
 		id := codes["id"].(float64)
 		return id
 	}
 	return 0
+}
+
+func ExtractTokenAdmin(e echo.Context) (result [2]string) {
+	user := e.Get("user").(*jwt.Token) //convert to jwt token from interface
+	if user.Valid {
+		codes := user.Claims.(jwt.MapClaims)
+		result[0] = codes["email"].(string)
+		result[1] = codes["password"].(string)
+		return result
+	}
+	return [2]string{}
 }

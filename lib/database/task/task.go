@@ -41,7 +41,7 @@ func (td *TaskDb) UpdateById(id int, user_id int, taskReg request.TaskRequest) (
 		return task.Task{}, err
 	}
 
-	td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Name_Task: taskReg.Name_Task, Priority: taskReg.Priority})
+	td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Name: taskReg.Name, Priority: taskReg.Priority, Project_id: taskReg.Project_id})
 
 	task := taskReg.ToTask()
 
@@ -64,9 +64,9 @@ func (bd *TaskDb) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 func (bd *TaskDb) GetAll(user_id int) ([]response.TaskResponse, error) {
 	taskRespArr := []response.TaskResponse{}
 
-	if err := bd.db.Model(task.Task{}).Where("user_id = ?", user_id).Find(&taskRespArr).Error; err != nil {
-		return nil, err
+	res := bd.db.Model(task.Task{}).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join projects on projects.id = tasks.project_id").Find(&taskRespArr)
+	if res.Error != nil {
+		return nil, res.Error
 	}
-
 	return taskRespArr, nil
 }

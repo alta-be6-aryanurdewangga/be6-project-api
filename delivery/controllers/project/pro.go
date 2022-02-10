@@ -5,7 +5,6 @@ import (
 	"part3/delivery/middlewares"
 	"part3/lib/database/project"
 	"part3/models/base"
-	proMod "part3/models/project"
 	"part3/models/project/request"
 	"strconv"
 
@@ -13,9 +12,7 @@ import (
 )
 
 type ProController struct {
-	repo   project.Project
-	proMod proMod.ProMod
-	proReq request.ProReq
+	repo project.Project
 }
 
 func NewRepo(repo project.Project) *ProController {
@@ -24,23 +21,11 @@ func NewRepo(repo project.Project) *ProController {
 	}
 }
 
-func NewProMod(proMod proMod.ProMod) *ProController {
-	return &ProController{
-		proMod: proMod,
-	}
-}
-
-func NewProReq(proReq request.ProReq) *ProController {
-	return &ProController{
-		proReq: proReq,
-	}
-}
-
 func (pc *ProController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user_id := int(middlewares.ExtractTokenId(c))
 		newPro := request.ProRequest{}
-		if err := c.Bind(&newPro); err != nil || newPro.Name_Pro == "" {
+		if err := c.Bind(&newPro); err != nil || newPro.Name == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in input project", nil))
 		}
 
@@ -80,11 +65,35 @@ func (pc *ProController) Put() echo.HandlerFunc {
 		id, _ := strconv.Atoi(c.Param("id"))
 		user_id := int(middlewares.ExtractTokenId(c))
 		upPro := request.ProRequest{}
-		if err := c.Bind(&upPro); err != nil || upPro.Name_Pro == "" {
+		if err := c.Bind(&upPro); err != nil || upPro.Name == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in input project", nil))
 		}
 
 		res, err := pc.repo.UpdateById(id, user_id, upPro)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database proces",
+				nil,
+			))
+		}
+
+		return c.JSON(http.StatusCreated, base.Success(
+			http.StatusCreated,
+			"success to update project",
+			res.ToProResponse(),
+		))
+	}
+}
+
+func (pc *ProController) Delete() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+
+		user_id := int(middlewares.ExtractTokenId(c))
+
+		res, err := pc.repo.DeleteById(id, user_id)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
@@ -94,10 +103,10 @@ func (pc *ProController) Put() echo.HandlerFunc {
 			))
 		}
 
-		return c.JSON(http.StatusCreated, base.Success(
-			http.StatusCreated,
-			"success to update project",
-			res.ToProResponse(),
+		return c.JSON(http.StatusOK, base.Success(
+			nil,
+			"success to delete project",
+			res,
 		))
 	}
 }
