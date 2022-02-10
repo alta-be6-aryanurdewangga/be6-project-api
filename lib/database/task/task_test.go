@@ -9,6 +9,7 @@ import (
 	"part3/utils"
 	"testing"
 
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -29,9 +30,11 @@ func TestCreate(t *testing.T) {
 	}
 
 	t.Run("success run Create", func(t *testing.T) {
-		mockTask := task.Task{User_ID: 1, Name_Task: "anonim123", Priority: 1}
-		res, err := repo.Create(int(mockTask.User_ID), mockTask)
+		mockTask := task.Task{Name_Task: "anonim123", Priority: 1}
+		res, err := repo.Create(1, mockTask)
 		assert.Nil(t, err)
+		log.Info(mockTask)
+		log.Info(res.User_ID)
 		assert.Equal(t, 1, int(res.ID))
 		assert.Equal(t, 1, int(res.User_ID))
 	})
@@ -69,14 +72,14 @@ func TestUpdateById(t *testing.T) {
 
 	t.Run("success run UpdateById", func(t *testing.T) {
 		mockTask := request.TaskRequest{Name_Task: "anonim321", Priority: 2}
-		res, err := repo.UpdateById(1,1, mockTask)
+		res, err := repo.UpdateById(1, 1, mockTask)
 		assert.Nil(t, err)
 		assert.Equal(t, "anonim321", res.Name_Task)
 	})
 
 	t.Run("fail run UpdateById", func(t *testing.T) {
 		mockTask := request.TaskRequest{Name_Task: "anonim321", Priority: 2}
-		res, err := repo.UpdateById(2,1, mockTask)
+		res, err := repo.UpdateById(2, 1, mockTask)
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})

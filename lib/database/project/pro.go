@@ -17,7 +17,7 @@ func New(db *gorm.DB) *ProDb {
 }
 
 func (pd *ProDb) Create(user_id int, newPro project.Project) (project.Project, error) {
-	// newPro.User_ID = uint(user_id)
+	newPro.User_ID = uint(user_id)
 	if err := pd.db.Create(&newPro).Error; err != nil {
 		return newPro, err
 	}

@@ -5,10 +5,12 @@ import (
 	"log"
 	"part3/configs"
 	"part3/delivery/controllers/auth"
+	"part3/delivery/controllers/project"
 	"part3/delivery/controllers/task"
 	"part3/delivery/controllers/user"
 	"part3/delivery/routes"
 	_authDb "part3/lib/database/auth"
+	_proDb "part3/lib/database/project"
 	_taskDB "part3/lib/database/task"
 	_userDb "part3/lib/database/user"
 	"part3/utils"
@@ -24,13 +26,16 @@ func main() {
 	userController := user.New(userRepo)
 	taskRepo := _taskDB.New(db)
 	taskController := task.New(taskRepo)
+	proRepo := _proDb.New(db)
+	proController := project.NewRepo(proRepo)
 	authRepo := _authDb.New(db)
 	authController := auth.New(authRepo)
 
 	e := echo.New()
 
 	routes.UserPath(e, userController, authController)
-	routes.TaskPath(e, taskController, authController)
+	routes.TaskPath(e, taskController)
+	routes.ProjectPath(e, proController)
 	routes.AdminPath(e, userController, authController)
 
 	log.Fatal(e.Start(fmt.Sprintf(":%d", config.Port)))

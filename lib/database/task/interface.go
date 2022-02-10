@@ -15,3 +15,4 @@ type Task interface {
 	DeleteById(id int, user_id int) (gorm.DeletedAt, error)
 	GetAll(user_id int) ([]response.TaskResponse, error)
 }
+
