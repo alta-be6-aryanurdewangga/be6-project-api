@@ -79,8 +79,6 @@ func (tc *TaskController) GetAll() echo.HandlerFunc {
 func (tc *TaskController) Put() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-		log.Info(c.Path())
-		log.Info(id)
 		user_id := int(middlewares.ExtractTokenId(c))
 		upTask := request.TaskRequest{}
 		if err := c.Bind(&upTask); err != nil || upTask.Name_Task == "" {

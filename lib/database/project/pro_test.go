@@ -9,6 +9,7 @@ import (
 	"part3/utils"
 	"testing"
 
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -25,10 +26,12 @@ func TestCreate(t *testing.T) {
 	repo := New(db)
 
 	t.Run("success run Create", func(t *testing.T) {
-		mockPro := project.Project{User_ID: 1, Name_Pro: "anonim"}
+		mockPro := project.Project{User_ID: 2, Name_Pro: "anonim"}
 		res, err := repo.Create(int(mockPro.User_ID), mockPro)
+		log.Info(res.User_ID)
 		assert.Nil(t, err)
 		assert.Equal(t, 1, int(res.ID))
+		assert.Equal(t, 2, int(res.User_ID))
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {

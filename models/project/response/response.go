@@ -1,6 +1,10 @@
 package response
 
-type ProResponse struct{
-	Id uint `json:"id"`
-	Name_Pro string `json:"name_pro"`
+import "time"
+
+type ProResponse struct {
+	Id         uint      `json:"id"`
+	Created_at time.Time `json:"created_at"`
+	Updated_at time.Time `jsonL:"updated_at"`
+	Name_Pro   string    `json:"name_pro"`
 }
