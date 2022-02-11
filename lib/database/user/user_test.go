@@ -2,12 +2,16 @@ package user
 
 import (
 	"part3/configs"
+	_libPro "part3/lib/database/project"
+	_libTask "part3/lib/database/task"
+	"part3/models/project"
 	"part3/models/task"
 	"part3/models/user"
 	"part3/models/user/request"
 	"part3/utils"
 	"testing"
 
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -39,11 +43,26 @@ func TestGetById(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
 	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
 	db.AutoMigrate(&user.User{})
 	mocUser := user.User{Name: "anonim123", Email: "anonim@123", Password: "anonim123"}
 	_, err := repo.Create(mocUser)
 	if err != nil {
+		t.Fatal()
+	}
+
+	mockPro := project.Project{Name: "Proanonim"}
+	if _, err := _libPro.New(db).Create(1, mockPro); err != nil {
+		t.Fatal()
+	}
+
+	mockTask := task.Task{Name: "Taskanonim123", Priority: 5, Project_id: 1}
+	if _, err := _libTask.New(db).Create(1, mockTask); err != nil {
+		log.Info(err)
 		t.Fatal()
 	}
 
@@ -58,6 +77,20 @@ func TestGetById(t *testing.T) {
 		assert.NotNil(t, err)
 		assert.NotEqual(t, 1, int(res.ID))
 	})
+
+	t.Run("fail run GetById", func(t *testing.T) {
+		db.Migrator().DropTable(&project.Project{})
+		_, err := repo.GetById(1)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("fail run GetById", func(t *testing.T) {
+		db.Migrator().DropTable(&task.Task{})
+		_, err := repo.GetById(1)
+		assert.NotNil(t, err)
+	})
+
+	
 }
 
 func TestUpdateById(t *testing.T) {

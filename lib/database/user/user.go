@@ -1,6 +1,8 @@
 package user
 
 import (
+	proResp "part3/models/project/response"
+	taskResp "part3/models/task/response"
 	"part3/models/user"
 	"part3/models/user/request"
 	"part3/models/user/response"
@@ -23,14 +25,33 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 	return newUser, nil
 }
 
-func (ud *UserDb) GetById(id int) (user.User, error) {
-	user := user.User{}
+func (ud *UserDb) GetById(id int) (response.UserResponse, error) {
+	userResp := response.UserResponse{}
 
-	if err := ud.db.Model(&user).Where("id = ?", id).First(&user).Error; err != nil {
-		return user, err
+	if err := ud.db.Model(&user.User{}).Where("id = ?", id).First(&userResp).Error; err != nil {
+		return response.UserResponse{}, err
 	}
 
-	return user, nil
+	task := []taskResp.TaskResponse{}
+
+	resTask := ud.db.Model(&user.User{}).Where("users.id = ?", id).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join tasks on users.id = tasks.user_id").Joins("inner join projects on projects.id = tasks.project_id").Find(&task)
+
+	if resTask.Error != nil {
+		return userResp, resTask.Error
+	}
+
+	userResp.Tasks = task
+
+	project := []proResp.ProResponse{}
+
+	resPro := ud.db.Model(&user.User{}).Where("users.id = ?", id).Select("projects.id as Id, projects.created_at as Created_at, projects.updated_at as Updated_at, projects.name as Name").Joins("inner join projects on projects.user_id = users.id").Find(&project)
+
+	if resPro.Error != nil {
+		return userResp, resTask.Error
+	}
+	userResp.Projects = project
+
+	return userResp, nil
 }
 
 func (ud *UserDb) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
@@ -67,6 +88,8 @@ func (ud *UserDb) GetAll() ([]response.UserResponse, error) {
 	if err := ud.db.Model(user.User{}).Limit(5).Find(&userRespArr).Error; err != nil {
 		return nil, err
 	}
+
+	
 
 	return userRespArr, nil
 }
