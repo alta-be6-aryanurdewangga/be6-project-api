@@ -8,9 +8,15 @@ import (
 	"part3/delivery/middlewares"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func UserPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
+	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}",
+	}))
+
 	e.POST("/users", uc.Create())
 	e.POST("/login", ac.Login())
 	e.GET("/users/me", uc.GetById(), middlewares.JwtMiddleware())
@@ -19,6 +25,10 @@ func UserPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
 }
 
 func TaskPath(e *echo.Echo, tc *task.TaskController) {
+	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}",
+	}))
 
 	// etask := e.Group("/todo",  middlewares.JwtMiddleware())
 	e.POST("/todo/tasks", tc.Create(), middlewares.JwtMiddleware())
@@ -28,6 +38,11 @@ func TaskPath(e *echo.Echo, tc *task.TaskController) {
 }
 
 func ProjectPath(e *echo.Echo, pc *project.ProController) {
+	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}",
+	}))
+
 	e.POST("/projects", pc.Create(), middlewares.JwtMiddleware())
 	e.GET("/projects", pc.GetAll(), middlewares.JwtMiddleware())
 	e.PUT("/projects/:id", pc.Put(), middlewares.JwtMiddleware())
@@ -35,5 +50,10 @@ func ProjectPath(e *echo.Echo, pc *project.ProController) {
 }
 
 func AdminPath(e *echo.Echo, uc *user.UserController, ac *auth.AuthController) {
+	e.Pre(middleware.RemoveTrailingSlash())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}",
+	}))
+
 	e.GET("/admin/users", uc.GetAll(), middlewares.JwtMiddleware())
 }

@@ -45,6 +45,8 @@ func TestCreate(t *testing.T) {
 		log.Info(res.User_ID)
 		assert.Equal(t, 1, int(res.ID))
 		assert.Equal(t, 1, int(res.User_ID))
+		assert.Equal(t, "anonim123", res.Name)
+		assert.Equal(t, 1, int(res.Priority))
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {
