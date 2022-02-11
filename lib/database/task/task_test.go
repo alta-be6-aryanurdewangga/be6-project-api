@@ -44,7 +44,7 @@ func TestCreate(t *testing.T) {
 		log.Info(res.User_ID)
 		assert.Equal(t, 1, int(res.ID))
 		assert.Equal(t, 1, int(res.User_ID))
-		assert.Equal(t, "anonim123", res.Name_Task)
+		assert.Equal(t, "anonim123", res.Name)
 		assert.Equal(t, 1, int(res.Priority))
 	})
 
