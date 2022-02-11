@@ -25,6 +25,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("Success Login", func(t *testing.T) {
 		e := echo.New()
+
 		reqBody, _ := json.Marshal(map[string]string{
 			"email":    "anonim@123",
 			"password": "anonim123",
