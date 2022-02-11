@@ -25,7 +25,7 @@ func (pc *ProController) Create() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user_id := int(middlewares.ExtractTokenId(c))
 		newPro := request.ProRequest{}
-		if err := c.Bind(&newPro); err != nil || newPro.Name_Pro == "" {
+		if err := c.Bind(&newPro); err != nil || newPro.Name == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in input project", nil))
 		}
 
@@ -65,7 +65,7 @@ func (pc *ProController) Put() echo.HandlerFunc {
 		id, _ := strconv.Atoi(c.Param("id"))
 		user_id := int(middlewares.ExtractTokenId(c))
 		upPro := request.ProRequest{}
-		if err := c.Bind(&upPro); err != nil || upPro.Name_Pro == "" {
+		if err := c.Bind(&upPro); err != nil || upPro.Name == "" {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(nil, "error in input project", nil))
 		}
 
@@ -74,7 +74,7 @@ func (pc *ProController) Put() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
 				http.StatusInternalServerError,
-				"error in database process",
+				"error in database proces",
 				nil,
 			))
 		}
