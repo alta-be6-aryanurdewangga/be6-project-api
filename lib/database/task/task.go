@@ -1,6 +1,7 @@
 package task
 
 import (
+	"errors"
 	"part3/models/task"
 	"part3/models/task/request"
 	"part3/models/task/response"
@@ -36,13 +37,12 @@ func (td *TaskDb) GetById(id int, user_id int) (task.Task, error) {
 }
 
 func (td *TaskDb) UpdateById(id int, user_id int, taskReg request.TaskRequest) (task.Task, error) {
-	_, err := td.GetById(id, user_id)
 
-	if err != nil {
-		return task.Task{}, err
+	res := td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Name: taskReg.Name, Priority: taskReg.Priority, Project_id: taskReg.Project_id})
+
+	if res.RowsAffected == 0 {
+		return task.Task{}, errors.New(gorm.ErrRecordNotFound.Error())
 	}
-
-	td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Name: taskReg.Name, Priority: taskReg.Priority, Project_id: taskReg.Project_id})
 
 	task := taskReg.ToTask()
 
@@ -51,13 +51,12 @@ func (td *TaskDb) UpdateById(id int, user_id int, taskReg request.TaskRequest) (
 
 func (bd *TaskDb) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 	task := task.Task{}
-	_, err := bd.GetById(id, user_id)
 
-	if err != nil {
-		return task.DeletedAt, err
+	res := bd.db.Model(&task).Where("id = ? AND user_id = ?", id, user_id).Delete(&task)
+
+	if res.RowsAffected == 0 {
+		return task.DeletedAt, errors.New(gorm.ErrRecordNotFound.Error())
 	}
-
-	bd.db.Model(&task).Where("id = ? AND user_id = ?", id, user_id).Delete(&task)
 
 	return task.DeletedAt, nil
 }

@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"part3/models/project"
 	"part3/models/project/request"
 	"part3/models/project/response"
@@ -34,13 +35,12 @@ func (pd *ProDb) GetById(id int, user_id int) (project.Project, error) {
 }
 
 func (pd *ProDb) UpdateById(id int, user_id int, upPro request.ProRequest) (project.Project, error) {
-	_, err := pd.GetById(id, user_id)
 
-	if err != nil {
-		return project.Project{}, err
+	res := pd.db.Model(project.Project{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(project.Project{Name: upPro.Name})
+
+	if res.RowsAffected == 0 {
+		return project.Project{}, errors.New(gorm.ErrRecordNotFound.Error())
 	}
-
-	pd.db.Model(project.Project{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(project.Project{Name: upPro.Name})
 
 	pro := upPro.ToProject()
 
@@ -49,14 +49,14 @@ func (pd *ProDb) UpdateById(id int, user_id int, upPro request.ProRequest) (proj
 
 func (pd *ProDb) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 	pro := project.Project{}
-	_, err := pd.GetById(id, user_id)
-	if err != nil {
-		return pro.DeletedAt, err
+
+	res := pd.db.Model(&pro).Where("id = ? AND user_id = ?", id, user_id).Delete(&pro)
+
+	if res.RowsAffected == 0 {
+		return pro.DeletedAt, errors.New(gorm.ErrRecordNotFound.Error())
 	}
 
-	pd.db.Model(&pro).Where("id = ? AND user_id = ?", id, user_id).Delete(&pro)
-
-	return pro.DeletedAt, err
+	return pro.DeletedAt, nil
 }
 
 func (pd *ProDb) GetAll(user_id int) ([]response.ProResponse, error) {
