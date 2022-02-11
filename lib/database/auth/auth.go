@@ -19,7 +19,7 @@ func New(db *gorm.DB) *AuthDb {
 
 func (ad *AuthDb) Login(UserLogin request.Userlogin) (user.User, error) {
 	user := user.User{}
-	if err := ad.db.Model(&user).Where("email = ? AND password = ?", UserLogin.Email, UserLogin.Password).First(&user).Error ; err != nil {
+	if err := ad.db.Model(&user).Where("email = ? AND password = ?", UserLogin.Email, UserLogin.Password).First(&user).Error; err != nil {
 		return user, err
 	}
 

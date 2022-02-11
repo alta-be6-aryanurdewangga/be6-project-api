@@ -13,6 +13,6 @@ type UserResponse struct {
 
 	Name     string                  `json:"name"`
 	Email    string                  `json:"email"`
+	Projects []proResp.ProResponse   `json:"projects"`
 	Tasks    []taskResp.TaskResponse `json:"tasks"`
-	Projects []proResp.ProResponse  `json:"projects"`
 }
