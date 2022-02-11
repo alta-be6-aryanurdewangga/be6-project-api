@@ -21,6 +21,7 @@ func (td *TaskDb) Create(user_id int, newTask task.Task) (task.Task, error) {
 	if err := td.db.Create(&newTask).Error; err != nil {
 		return newTask, err
 	}
+
 	return newTask, nil
 }
 
@@ -69,4 +70,16 @@ func (bd *TaskDb) GetAll(user_id int) ([]response.TaskResponse, error) {
 		return nil, res.Error
 	}
 	return taskRespArr, nil
+}
+
+func (td *TaskDb) GetByIdResp(id int, user_id int) (response.TaskResponse, error) {
+	taskResp := response.TaskResponse{}
+
+	res := td.db.Model(task.Task{}).Where("tasks.id = ? AND tasks.user_id = ?", id, user_id).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join projects on projects.id = tasks.project_id").First(&taskResp)
+
+	if res.Error != nil {
+		return response.TaskResponse{}, res.Error
+	}
+
+	return taskResp, nil
 }

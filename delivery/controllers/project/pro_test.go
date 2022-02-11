@@ -159,7 +159,7 @@ func TestGetAll(t *testing.T) {
 		assert.Equal(t, "error in database process", response.Message)
 	})
 
-	t.Run("success to get all task", func(t *testing.T) {
+	t.Run("success to get all project", func(t *testing.T) {
 		e := echo.New()
 
 		req := httptest.NewRequest(http.MethodGet, "/", bytes.NewBuffer(nil))
@@ -178,7 +178,7 @@ func TestGetAll(t *testing.T) {
 		response := GetRespFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, 201, response.Code)
-		assert.Equal(t, "success to get all task", response.Message)
+		assert.Equal(t, "success to get all project", response.Message)
 	})
 }
 

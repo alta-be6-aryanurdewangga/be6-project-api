@@ -124,6 +124,33 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, "error in database process", response.Message)
 	})
 
+	t.Run("error in database process", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{
+			"name":       "anonim",
+			"priority":   1,
+			"project_id": 1,
+		})
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks")
+
+		taskController := New(&MockFailGetByIdRespTaskLib{}, &MockProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(taskController.Create())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+		response := GetTaskResponFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in database process", response.Message)
+	})
+
 	t.Run("success to create task", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{
@@ -266,35 +293,9 @@ func TestPut(t *testing.T) {
 	t.Run("error in database process", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{
-			"name": "anonim",
-			"priority":  1,
-			"project_id":5,
-		})
-		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
-		res := httptest.NewRecorder()
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
-		context := e.NewContext(req, res)
-		context.SetPath("/todo/tasks/1")
-		taskController := New(&MockFailTaskLib{}, &MockFailProLib{})
-		// taskController.Create()(context)
-		if err := middlewares.JwtMiddleware()(taskController.Put())(context); err != nil {
-			log.Fatal(err)
-			return
-		}
-		response := GetTaskResponFormat{}
-
-		json.Unmarshal([]byte(res.Body.Bytes()), &response)
-		assert.Equal(t, 500, response.Code)
-		assert.Equal(t, "error in database process", response.Message)
-	})
-
-	t.Run("error in database process", func(t *testing.T) {
-		e := echo.New()
-		reqBody, _ := json.Marshal(map[string]interface{}{
-			"name": "anonim",
-			"priority":  1,
-			"project_id":5,
+			"name":       "anonim",
+			"priority":   1,
+			"project_id": 5,
 		})
 		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
@@ -318,9 +319,9 @@ func TestPut(t *testing.T) {
 	t.Run("success to update task", func(t *testing.T) {
 		e := echo.New()
 		reqBody, _ := json.Marshal(map[string]interface{}{
-			"name": "anonim",
-			"priority":  1,
-			"project_id":5,
+			"name":       "anonim",
+			"priority":   1,
+			"project_id": 5,
 		})
 		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
@@ -446,6 +447,10 @@ func (m *MockTaskLib) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 	return task.DeletedAt, nil
 }
 
+func (m *MockTaskLib) GetByIdResp(id int, user_id int) (response.TaskResponse, error) {
+	return response.TaskResponse{}, nil
+}
+
 type MockFailTaskLib struct{}
 
 func (mf *MockFailTaskLib) Create(user_id int, newTask task.Task) (task.Task, error) {
@@ -465,6 +470,35 @@ func (mf *MockFailTaskLib) UpdateById(id int, user_id int, taskReg request.TaskR
 func (m *MockFailTaskLib) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 	task := task.Task{}
 	return task.DeletedAt, errors.New("error in database process")
+}
+
+func (m *MockFailTaskLib) GetByIdResp(id int, user_id int) (response.TaskResponse, error) {
+	return response.TaskResponse{}, errors.New("error in database process")
+}
+
+type MockFailGetByIdRespTaskLib struct{}
+
+func (mf *MockFailGetByIdRespTaskLib) Create(user_id int, newTask task.Task) (task.Task, error) {
+
+	return task.Task{}, nil
+}
+
+func (mf *MockFailGetByIdRespTaskLib) GetAll(user_id int) ([]response.TaskResponse, error) {
+	return []response.TaskResponse{}, errors.New("error in database process")
+}
+
+func (mf *MockFailGetByIdRespTaskLib) UpdateById(id int, user_id int, taskReg request.TaskRequest) (task.Task, error) {
+
+	return task.Task{}, errors.New("error in database process")
+}
+
+func (m *MockFailGetByIdRespTaskLib) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
+	task := task.Task{}
+	return task.DeletedAt, errors.New("error in database process")
+}
+
+func (m *MockFailGetByIdRespTaskLib) GetByIdResp(id int, user_id int) (response.TaskResponse, error) {
+	return response.TaskResponse{}, errors.New("error in database process")
 }
 
 /* Moch authentification */
@@ -520,5 +554,5 @@ func (m *MockFailProLib) DeleteById(id int, user_id int) (gorm.DeletedAt, error)
 }
 
 func (m *MockFailProLib) GetById(id int, user_id int) (proMod.Project, error) {
-	return proMod.Project{},  errors.New("error in database process")
+	return proMod.Project{}, errors.New("error in database process")
 }

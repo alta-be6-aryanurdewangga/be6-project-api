@@ -54,7 +54,7 @@ func (pc *ProController) GetAll() echo.HandlerFunc {
 
 		return c.JSON(http.StatusCreated, base.Success(
 			http.StatusCreated,
-			"success to get all task",
+			"success to get all project",
 			res,
 		))
 	}

@@ -62,9 +62,17 @@ func TestGetById(t *testing.T) {
 	db.Migrator().DropTable(&task.Task{})
 	db.Migrator().DropTable(&user.User{})
 	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
 	repo := New(db)
-	mockCreate := project.Project{User_ID: 1, Name: "anonim"}
-	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+
+	mockUser := user.User{Name: "Useranonim123", Email: "anonim@123", Password: "anonim123"}
+
+	if _, err := _lib.New(db).Create(mockUser); err != nil {
+		t.Fatal()
+	}
+
+	mockCreate := project.Project{ Name: "anonim"}
+	_, err := repo.Create(1, mockCreate)
 	if err != nil {
 		t.Fatal()
 	}
@@ -84,15 +92,23 @@ func TestGetById(t *testing.T) {
 }
 
 func TestUpdateById(t *testing.T) {
-	config := configs.GetConfig()
-	db := utils.InitDB(config)
+	confg := configs.GetConfig()
+	db := utils.InitDB(confg)
 	db.Migrator().DropTable(&project.Project{})
 	db.Migrator().DropTable(&task.Task{})
 	db.Migrator().DropTable(&user.User{})
 	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
 	repo := New(db)
-	mockCreate := project.Project{User_ID: 1, Name: "anonim"}
-	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+
+	mockUser := user.User{Name: "Useranonim123", Email: "anonim@123", Password: "anonim123"}
+
+	if _, err := _lib.New(db).Create(mockUser); err != nil {
+		t.Fatal()
+	}
+
+	mockCreate := project.Project{ Name: "anonim"}
+	_, err := repo.Create(1, mockCreate)
 	if err != nil {
 		t.Fatal()
 	}
@@ -112,15 +128,23 @@ func TestUpdateById(t *testing.T) {
 }
 
 func TestDeleteById(t *testing.T) {
-	config := configs.GetConfig()
-	db := utils.InitDB(config)
+	confg := configs.GetConfig()
+	db := utils.InitDB(confg)
 	db.Migrator().DropTable(&project.Project{})
 	db.Migrator().DropTable(&task.Task{})
 	db.Migrator().DropTable(&user.User{})
 	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
 	repo := New(db)
-	mockCreate := project.Project{User_ID: 1, Name: "anonim"}
-	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+
+	mockUser := user.User{Name: "Useranonim123", Email: "anonim@123", Password: "anonim123"}
+
+	if _, err := _lib.New(db).Create(mockUser); err != nil {
+		t.Fatal()
+	}
+
+	mockCreate := project.Project{ Name: "anonim"}
+	_, err := repo.Create(1, mockCreate)
 	if err != nil {
 		t.Fatal()
 	}
@@ -139,15 +163,23 @@ func TestDeleteById(t *testing.T) {
 }
 
 func TestGetAll(t *testing.T) {
-	config := configs.GetConfig()
-	db := utils.InitDB(config)
+	confg := configs.GetConfig()
+	db := utils.InitDB(confg)
 	db.Migrator().DropTable(&project.Project{})
 	db.Migrator().DropTable(&task.Task{})
 	db.Migrator().DropTable(&user.User{})
 	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
 	repo := New(db)
-	mockCreate := project.Project{User_ID: 1, Name: "anonim"}
-	_, err := repo.Create(int(mockCreate.User_ID), mockCreate)
+
+	mockUser := user.User{Name: "Useranonim123", Email: "anonim@123", Password: "anonim123"}
+
+	if _, err := _lib.New(db).Create(mockUser); err != nil {
+		t.Fatal()
+	}
+
+	mockCreate := project.Project{ Name: "anonim"}
+	_, err := repo.Create(1, mockCreate)
 	if err != nil {
 		t.Fatal()
 	}
