@@ -33,6 +33,15 @@ func (ud *UserDb) GetById(id int) (response.UserResponse, error) {
 		return response.UserResponse{}, err
 	}
 
+	project := []proResp.ProResponse{}
+
+	resPro := ud.db.Model(&user.User{}).Where("users.id = ?", id).Select("projects.id as Id, projects.created_at as Created_at, projects.updated_at as Updated_at, projects.name as Name").Joins("inner join projects on projects.user_id = users.id").Find(&project)
+
+	if resPro.Error != nil {
+		return userResp, resPro.Error
+	}
+	userResp.Projects = project
+
 	task := []taskResp.TaskResponse{}
 
 	resTask := ud.db.Model(&user.User{}).Where("users.id = ?", id).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join tasks on users.id = tasks.user_id").Joins("inner join projects on projects.id = tasks.project_id").Find(&task)
@@ -42,15 +51,6 @@ func (ud *UserDb) GetById(id int) (response.UserResponse, error) {
 	}
 
 	userResp.Tasks = task
-
-	project := []proResp.ProResponse{}
-
-	resPro := ud.db.Model(&user.User{}).Where("users.id = ?", id).Select("projects.id as Id, projects.created_at as Created_at, projects.updated_at as Updated_at, projects.name as Name").Joins("inner join projects on projects.user_id = users.id").Find(&project)
-
-	if resPro.Error != nil {
-		return userResp, resTask.Error
-	}
-	userResp.Projects = project
 
 	return userResp, nil
 }
@@ -87,6 +87,16 @@ func (ud *UserDb) GetAll() ([]response.UserResponse, error) {
 	}
 
 	for i := 0; i < len(userRespArr); i++ {
+
+		project := []proResp.ProResponse{}
+
+		resPro := ud.db.Model(&user.User{}).Where("users.id = ?", userRespArr[i].ID).Select("projects.id as Id, projects.created_at as Created_at, projects.updated_at as Updated_at, projects.name as Name").Joins("inner join projects on projects.user_id = users.id").Find(&project)
+
+		if resPro.Error != nil {
+			return userRespArr, resPro.Error
+		}
+		userRespArr[i].Projects = project
+
 		task := []taskResp.TaskResponse{}
 		resTask := ud.db.Model(&user.User{}).Where("users.id = ?", userRespArr[i].ID).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join tasks on users.id = tasks.user_id").Joins("inner join projects on projects.id = tasks.project_id").Find(&task)
 
@@ -96,14 +106,6 @@ func (ud *UserDb) GetAll() ([]response.UserResponse, error) {
 
 		userRespArr[i].Tasks = task
 
-		project := []proResp.ProResponse{}
-
-		resPro := ud.db.Model(&user.User{}).Where("users.id = ?", userRespArr[i].ID).Select("projects.id as Id, projects.created_at as Created_at, projects.updated_at as Updated_at, projects.name as Name").Joins("inner join projects on projects.user_id = users.id").Find(&project)
-
-		if resPro.Error != nil {
-			return userRespArr, resTask.Error
-		}
-		userRespArr[i].Projects = project
 	}
 
 	return userRespArr, nil
