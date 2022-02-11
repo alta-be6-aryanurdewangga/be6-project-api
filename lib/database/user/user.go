@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	proResp "part3/models/project/response"
 	taskResp "part3/models/task/response"
 	"part3/models/user"
@@ -56,13 +57,11 @@ func (ud *UserDb) GetById(id int) (response.UserResponse, error) {
 
 func (ud *UserDb) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
 
-	_, err := ud.GetById(id)
+	res := ud.db.Model(&user.User{Model: gorm.Model{ID: uint(id)}}).Updates(user.User{Name: userReg.Name, Email: userReg.Email, Password: userReg.Password})
 
-	if err != nil {
-		return user.User{}, err
+	if res.RowsAffected == 0 {
+		return user.User{}, errors.New(gorm.ErrRecordNotFound.Error())
 	}
-
-	ud.db.Model(&user.User{Model: gorm.Model{ID: uint(id)}}).Updates(user.User{Name: userReg.Name, Email: userReg.Email, Password: userReg.Password})
 
 	user := userReg.ToUser()
 
@@ -71,13 +70,11 @@ func (ud *UserDb) UpdateById(id int, userReg request.UserRegister) (user.User, e
 
 func (ud *UserDb) DeleteById(id int) (gorm.DeletedAt, error) {
 	user := user.User{}
-	_, err := ud.GetById(id)
 
-	if err != nil {
-		return user.DeletedAt, err
+	res := ud.db.Model(&user).Where("id = ?", id).Delete(&user)
+	if res.RowsAffected == 0 {
+		return user.DeletedAt, errors.New(gorm.ErrRecordNotFound.Error())
 	}
-
-	ud.db.Model(&user).Where("id = ?", id).Delete(&user)
 
 	return user.DeletedAt, nil
 }
