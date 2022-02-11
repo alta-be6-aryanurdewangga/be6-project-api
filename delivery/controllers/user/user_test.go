@@ -570,8 +570,8 @@ func (m *MockUserLib) Create(newUser user.User) (user.User, error) {
 	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
 
-func (m *MockUserLib) GetById(id int) (user.User, error) {
-	return user.User{}, nil
+func (m *MockUserLib) GetById(id int) (response.UserResponse, error) {
+	return response.UserResponse{}, nil
 }
 
 func (m *MockUserLib) UpdateById(id int, userReg request.UserRegister) (user.User, error) {
@@ -596,8 +596,8 @@ func (mf *MockFalseLib) Create(newUser user.User) (user.User, error) {
 	return user.User{Name: newUser.Name, Email: newUser.Email, Password: newUser.Password}, nil
 }
 
-func (mf *MockFalseLib) GetById(id int) (user.User, error) {
-	return user.User{}, errors.New("False Object")
+func (mf *MockFalseLib) GetById(id int) (response.UserResponse, error) {
+	return response.UserResponse{}, errors.New("False Object")
 }
 
 func (mf *MockFalseLib) UpdateById(id int, userReg request.UserRegister) (user.User, error) {

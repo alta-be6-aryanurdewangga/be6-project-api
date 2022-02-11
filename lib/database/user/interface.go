@@ -10,7 +10,7 @@ import (
 
 type User interface {
 	Create(newUser user.User) (user.User, error)
-	GetById(id int) (user.User, error)
+	GetById(id int) (response.UserResponse, error)
 	UpdateById(id int, userReg request.UserRegister) (user.User, error)
 	DeleteById(id int) (gorm.DeletedAt, error)
 	GetAll() ([]response.UserResponse, error)
