@@ -65,8 +65,8 @@ func (bd *TaskDb) GetAll(user_id int) ([]response.TaskResponse, error) {
 	taskRespArr := []response.TaskResponse{}
 
 	res := bd.db.Model(task.Task{}).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join projects on projects.id = tasks.project_id").Find(&taskRespArr)
-	if res.Error != nil {
-		return nil, res.Error
+	if res.RowsAffected == 0 {
+		return nil, errors.New(gorm.ErrRecordNotFound.Error())
 	}
 	return taskRespArr, nil
 }
@@ -76,7 +76,7 @@ func (td *TaskDb) GetByIdResp(id int, user_id int) (response.TaskResponse, error
 
 	res := td.db.Model(task.Task{}).Where("tasks.id = ? AND tasks.user_id = ?", id, user_id).Select("tasks.id as ID, tasks.created_at as CreatedAt, tasks.updated_at as UpdatedAt, tasks.name as Name, tasks.project_id as Project_id,tasks.priority as Priority ,projects.name as Project_name").Joins("inner join projects on projects.id = tasks.project_id").First(&taskResp)
 
-	if res.Error != nil {
+	if res.RowsAffected == 0 {
 		return response.TaskResponse{}, res.Error
 	}
 
