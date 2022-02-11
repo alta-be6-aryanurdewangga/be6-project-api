@@ -22,6 +22,12 @@ import (
 func TestCreate(t *testing.T) {
 	var jwtToken string
 
+	type UserRegister struct {
+		Name     interface{} `json:"name"`
+		Email    interface{} `json:"email" `
+		Password interface{} `json:"password"`
+	}
+
 	t.Run("Success Login", func(t *testing.T) {
 		e := echo.New()
 
@@ -50,12 +56,6 @@ func TestCreate(t *testing.T) {
 	t.Run("Failed to Create", func(t *testing.T) {
 		e := echo.New()
 
-		type UserRegister struct {
-			Name     interface{} `json:"name"`
-			Email    interface{} `json:"email" `
-			Password interface{} `json:"password"`
-		}
-
 		reqBody, _ := json.Marshal(UserRegister{
 			Name:     0,
 			Email:    0,
@@ -64,7 +64,6 @@ func TestCreate(t *testing.T) {
 
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
-
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
 
