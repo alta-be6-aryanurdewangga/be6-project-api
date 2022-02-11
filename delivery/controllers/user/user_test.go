@@ -50,9 +50,7 @@ func TestCreate(t *testing.T) {
 	t.Run("Failed to Create", func(t *testing.T) {
 		e := echo.New()
 
-		reqBody, _ := json.Marshal(map[string]string{
-			"email":    "",
-			"password": "anonim123",
+		reqBody, _ := json.Marshal(map[string]int{
 		})
 
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
