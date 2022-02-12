@@ -253,3 +253,42 @@ func TestGetByIdResp(t *testing.T) {
 		assert.NotNil(t, err)
 	})
 }
+
+func TestUpdateStatus(t *testing.T) {
+	config := configs.GetConfig()
+	db := utils.InitDB(config)
+	repo := New(db)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
+	db.AutoMigrate(&user.User{})
+
+	t.Run("success run UpdateById", func(t *testing.T) {
+		mocUserP := user.User{Name: "anonim1", Email: "anonim@1", Password: "anonim1"}
+		if _, err := _lib.New(db).Create(mocUserP); err != nil {
+			t.Fatal()
+		}
+		mockTaskP := task.Task{Name: "Taskanonim123", Priority: 5, Project_id: 1}
+		if _, err := repo.Create(1, mockTaskP); err != nil {
+			t.Fatal()
+		}
+		res, err := repo.UpdateStatus(1, 1, true)
+		assert.Nil(t, err)
+		assert.Equal(t, true, res)
+	})
+
+	t.Run("fail run UpdateById", func(t *testing.T) {
+		mocUserP := user.User{Name: "anonim2", Email: "anonim@2", Password: "anonim2"}
+		if _, err := _lib.New(db).Create(mocUserP); err != nil {
+			t.Fatal()
+		}
+		mockTaskP := task.Task{Name: "Taskanonim123", Priority: 5, Project_id: 1}
+		if _, err := repo.Create(1, mockTaskP); err != nil {
+			t.Fatal()
+		}
+		_, err := repo.UpdateStatus(10, 1, true)
+		assert.NotNil(t, err)
+	})
+}

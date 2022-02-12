@@ -82,3 +82,16 @@ func (td *TaskDb) GetByIdResp(id int, user_id int) (response.TaskResponse, error
 
 	return taskResp, nil
 }
+
+func (td *TaskDb) UpdateStatus(id int, user_id int, status bool) (bool, error) {
+
+	taskM := task.Task{}
+
+	res := td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Status: status}).First(&taskM)
+
+	if res.RowsAffected == 0 {
+		return taskM.Status, res.Error
+	}
+
+	return taskM.Status, nil
+}
