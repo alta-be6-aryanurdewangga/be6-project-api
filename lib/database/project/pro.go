@@ -62,8 +62,8 @@ func (pd *ProDb) DeleteById(id int, user_id int) (gorm.DeletedAt, error) {
 func (pd *ProDb) GetAll(user_id int) ([]response.ProResponse, error) {
 	proRespArr := []response.ProResponse{}
 
-	if err := pd.db.Model(project.Project{}).Where("user_id = ?", user_id).Find(&proRespArr).Error; err != nil {
-		return nil, err
+	if pd.db.Model(project.Project{}).Where("user_id = ?", user_id).Find(&proRespArr).RowsAffected == 0 {
+		return nil, errors.New(gorm.ErrRecordNotFound.Error())
 	}
 
 	return proRespArr, nil

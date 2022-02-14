@@ -9,7 +9,6 @@ import (
 	"part3/utils"
 	"testing"
 
-	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,7 +32,7 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, 1, int(res.ID))
 		assert.Equal(t, "anonim@123", res.Email)
 		assert.Equal(t, "anonim123", res.Password)
-		log.Info(res)
+
 	})
 
 	t.Run("fail run login", func(t *testing.T) {

@@ -6,6 +6,7 @@ type TaskRequest struct {
 	Name       string `json:"name"`
 	Priority   int    `json:"priority"`
 	Project_id uint   `json:"project_id"`
+	Status     bool   `json:"status"`
 }
 
 func (t *TaskRequest) ToTask() task.Task {
@@ -13,5 +14,6 @@ func (t *TaskRequest) ToTask() task.Task {
 		Name:       t.Name,
 		Priority:   t.Priority,
 		Project_id: t.Project_id,
+		Status:     t.Status,
 	}
 }

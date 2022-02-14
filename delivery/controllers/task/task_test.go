@@ -421,6 +421,107 @@ func TestDelete(t *testing.T) {
 	})
 }
 
+func TestUpdateByStatus(t *testing.T) {
+	var jwtToken string
+
+	t.Run("success login", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]string{
+			"email":    "anonim@123",
+			"password": "anonim123",
+		})
+		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		context := e.NewContext(req, res)
+		context.SetPath("/login")
+		authController := auth.New(&MockAuthLib{})
+		authController.Login()(context)
+		response := auth.LoginRespFormat{}
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		jwtToken = response.Data["token"].(string)
+		assert.Equal(t, 200, response.Code)
+		assert.NotNil(t, response.Data["token"])
+	})
+
+	t.Run("error in update status", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/1")
+
+		taskController := New(&MockFailTaskLib{}, &MockFailProLib{})
+		if err := middlewares.JwtMiddleware()(taskController.UpdateByStatus())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+		response := GetTaskResponFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 400, response.Code)
+		assert.Equal(t, "error in update status", response.Message)
+	})
+
+	t.Run("error in database process", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/1")
+		taskController := New(&MockFailGetByIdRespTaskLib{}, &MockFailProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(taskController.UpdateByStatus())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+		response := GetTaskResponFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 500, response.Code)
+		assert.Equal(t, "error in database process", response.Message)
+	})
+
+	t.Run("success to update status", func(t *testing.T) {
+		e := echo.New()
+		reqBody, _ := json.Marshal(map[string]interface{}{
+			"name":       "anonim",
+			"priority":   1,
+			"project_id": 5,
+			"status":     true,
+		})
+		req := httptest.NewRequest(http.MethodPut, "/", bytes.NewBuffer(reqBody))
+		res := httptest.NewRecorder()
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %v", jwtToken))
+		context := e.NewContext(req, res)
+		context.SetPath("/todo/tasks/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
+
+		taskController := New(&MockTaskLib{}, &MockProLib{})
+		// taskController.Create()(context)
+		if err := middlewares.JwtMiddleware()(taskController.UpdateByStatus())(context); err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		response := GetTaskResponFormat{}
+
+		json.Unmarshal([]byte(res.Body.Bytes()), &response)
+		assert.Equal(t, 200, response.Code)
+		assert.Equal(t, "success to update status", response.Message)
+	})
+}
+
 type MockTaskLib struct{}
 
 func (m *MockTaskLib) Create(user_id int, newTask task.Task) (task.Task, error) {
@@ -451,6 +552,11 @@ func (m *MockTaskLib) GetByIdResp(id int, user_id int) (response.TaskResponse, e
 	return response.TaskResponse{}, nil
 }
 
+func (m *MockTaskLib) UpdateByStatus(id int, user_id int, status bool) (bool, error) {
+
+	return status, nil
+}
+
 type MockFailTaskLib struct{}
 
 func (mf *MockFailTaskLib) Create(user_id int, newTask task.Task) (task.Task, error) {
@@ -476,6 +582,10 @@ func (m *MockFailTaskLib) GetByIdResp(id int, user_id int) (response.TaskRespons
 	return response.TaskResponse{}, errors.New("error in database process")
 }
 
+func (m *MockFailTaskLib) UpdateByStatus(id int, user_id int, status bool) (bool, error) {
+	return false, errors.New("error in database process")
+}
+
 type MockFailGetByIdRespTaskLib struct{}
 
 func (mf *MockFailGetByIdRespTaskLib) Create(user_id int, newTask task.Task) (task.Task, error) {
@@ -499,6 +609,10 @@ func (m *MockFailGetByIdRespTaskLib) DeleteById(id int, user_id int) (gorm.Delet
 
 func (m *MockFailGetByIdRespTaskLib) GetByIdResp(id int, user_id int) (response.TaskResponse, error) {
 	return response.TaskResponse{}, errors.New("error in database process")
+}
+
+func (m *MockFailGetByIdRespTaskLib) UpdateByStatus(id int, user_id int, status bool) (bool, error) {
+	return false, errors.New("error in database process")
 }
 
 /* Moch authentification */

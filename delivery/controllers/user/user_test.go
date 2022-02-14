@@ -15,6 +15,7 @@ import (
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 )
@@ -331,6 +332,7 @@ func TestUpdateByID(t *testing.T) {
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, 200, response.Code)
 		assert.Equal(t, response.Data, response.Data)
+		log.Info(response.Data)
 	})
 
 }

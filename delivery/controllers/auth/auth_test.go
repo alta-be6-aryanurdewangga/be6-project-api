@@ -27,14 +27,19 @@ func TestLogin(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(reqBody))
 		res := httptest.NewRecorder()
 		req.Header.Set("Content-Type", "application/json")
+
 		context := e.NewContext(req, res)
 		context.SetPath("/login")
+
 		authCont := New(&MockAuthLib{})
 		authCont.Login()(context)
+
 		resp := LoginRespFormat{}
+
 		json.Unmarshal([]byte(res.Body.Bytes()), &resp)
 		assert.Equal(t, 400, resp.Code)
 		assert.Equal(t, "error in input file", resp.Message)
+
 	})
 
 	t.Run("error in call database", func(t *testing.T) {

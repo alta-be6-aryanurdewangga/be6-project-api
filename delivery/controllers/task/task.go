@@ -6,7 +6,9 @@ import (
 	"part3/lib/database/project"
 	"part3/lib/database/task"
 	"part3/models/base"
+
 	"part3/models/task/request"
+
 	"strconv"
 
 	"github.com/labstack/echo/v4"
@@ -148,4 +150,37 @@ func (tc *TaskController) Delete() echo.HandlerFunc {
 			res,
 		))
 	}
+}
+
+func (tc *TaskController) UpdateByStatus() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+		user_id := int(middlewares.ExtractTokenId(c))
+		statusTask := request.TaskRequest{}.Status
+
+		if err := c.Bind(&statusTask); err != nil || !statusTask {
+			return c.JSON(http.StatusBadRequest, base.BadRequest(
+				http.StatusBadRequest,
+				"error in update status",
+				nil,
+			))
+		}
+
+		res, err := tc.repo.UpdateByStatus(id, user_id, statusTask)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, base.InternalServerError(
+				http.StatusInternalServerError,
+				"error in database process",
+				nil,
+			))
+		}
+
+		return c.JSON(http.StatusOK, base.Success(
+			http.StatusOK,
+			"success to update status",
+			res,
+		))
+	}
+
 }

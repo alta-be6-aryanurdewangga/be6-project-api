@@ -34,6 +34,7 @@ func TaskPath(e *echo.Echo, tc *task.TaskController) {
 	e.POST("/todo/tasks", tc.Create(), middlewares.JwtMiddleware())
 	e.GET("/todo/tasks", tc.GetAll(), middlewares.JwtMiddleware())
 	e.PUT("/todo/tasks/:id", tc.Put(), middlewares.JwtMiddleware())
+	e.PUT("/todo/tasks/:id", tc.UpdateByStatus(), middlewares.JwtMiddleware())
 	e.DELETE("/todo/tasks/:id", tc.Delete(), middlewares.JwtMiddleware())
 }
 
