@@ -152,7 +152,7 @@ func (tc *TaskController) Delete() echo.HandlerFunc {
 	}
 }
 
-func (tc *TaskController) UpdateByStatus() echo.HandlerFunc {
+func (tc *TaskController) UpdateStatus() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
 		user_id := int(middlewares.ExtractTokenId(c))

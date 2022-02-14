@@ -421,7 +421,7 @@ func TestDelete(t *testing.T) {
 	})
 }
 
-func TestUpdateByStatus(t *testing.T) {
+func TestUpdateStatus(t *testing.T) {
 	var jwtToken string
 
 	t.Run("success login", func(t *testing.T) {
@@ -457,7 +457,7 @@ func TestUpdateByStatus(t *testing.T) {
 		context.SetPath("/todo/tasks/1")
 
 		taskController := New(&MockFailTaskLib{}, &MockFailProLib{})
-		if err := middlewares.JwtMiddleware()(taskController.UpdateByStatus())(context); err != nil {
+		if err := middlewares.JwtMiddleware()(taskController.UpdateStatus())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
@@ -479,7 +479,7 @@ func TestUpdateByStatus(t *testing.T) {
 		context.SetPath("/todo/tasks/1")
 		taskController := New(&MockFailGetByIdRespTaskLib{}, &MockFailProLib{})
 		// taskController.Create()(context)
-		if err := middlewares.JwtMiddleware()(taskController.UpdateByStatus())(context); err != nil {
+		if err := middlewares.JwtMiddleware()(taskController.UpdateStatus())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
@@ -509,7 +509,7 @@ func TestUpdateByStatus(t *testing.T) {
 
 		taskController := New(&MockTaskLib{}, &MockProLib{})
 		// taskController.Create()(context)
-		if err := middlewares.JwtMiddleware()(taskController.UpdateByStatus())(context); err != nil {
+		if err := middlewares.JwtMiddleware()(taskController.UpdateStatus())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
