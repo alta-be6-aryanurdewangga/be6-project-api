@@ -152,13 +152,13 @@ func (tc *TaskController) Delete() echo.HandlerFunc {
 	}
 }
 
-func (tc *TaskController) UpdateStatus() echo.HandlerFunc {
+func (tc *TaskController) TaskCompleted() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
 		user_id := int(middlewares.ExtractTokenId(c))
-		statusTask := request.TaskRequest{}.Status
+		statusTask := request.TaskRequest{}
 
-		if err := c.Bind(&statusTask); err != nil || !statusTask {
+		if err := c.Bind(&statusTask); err != nil {
 			return c.JSON(http.StatusBadRequest, base.BadRequest(
 				http.StatusBadRequest,
 				"error in update status",
@@ -166,7 +166,7 @@ func (tc *TaskController) UpdateStatus() echo.HandlerFunc {
 			))
 		}
 
-		res, err := tc.repo.UpdateStatus(id, user_id, statusTask)
+		res, err := tc.repo.TaskCompleted(id, user_id, statusTask.Status)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(

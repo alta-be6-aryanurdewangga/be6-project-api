@@ -11,9 +11,9 @@ type Task struct {
 
 	User_ID    uint
 	Name       string `gorm:"not null;type:varchar(100)"`
-	Status     bool
-	Priority   int  `gorm:"not null;index;type:int"`
-	Project_id uint `gorm:"not null"`
+	Status     bool   `type:"boolean"`
+	Priority   int    `gorm:"not null;index;type:int"`
+	Project_id uint   `gorm:"not null"`
 }
 
 func (t *Task) ToTaskResponse() response.TaskResponse {

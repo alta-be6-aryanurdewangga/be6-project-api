@@ -256,7 +256,7 @@ func TestGetByIdResp(t *testing.T) {
 	})
 }
 
-func TestUpdateStatus(t *testing.T) {
+func TestTaskCompleted(t *testing.T) {
 	config := configs.GetConfig()
 	db := utils.InitDB(config)
 	repo := New(db)
@@ -267,7 +267,7 @@ func TestUpdateStatus(t *testing.T) {
 	db.AutoMigrate(&task.Task{})
 	db.AutoMigrate(&user.User{})
 
-	t.Run("success run UpdateById", func(t *testing.T) {
+	t.Run("fail run TaskCompleted", func(t *testing.T) {
 		mocUserP := user.User{Name: "anonim1", Email: "anonim@1", Password: "anonim1"}
 		if _, err := _lib.New(db).Create(mocUserP); err != nil {
 			t.Fatal()
@@ -276,13 +276,43 @@ func TestUpdateStatus(t *testing.T) {
 		if _, err := repo.Create(1, mockTaskP); err != nil {
 			t.Fatal()
 		}
-		res, err := repo.UpdateStatus(1, 1, true)
-		assert.Nil(t, err)
-		assert.Equal(t, true, res)
+		mockTask := request.TaskRequest{Status: true}
+		_, err := repo.TaskCompleted(5, 1, mockTask)
+		assert.NotNil(t, err)
+
 	})
 
-	t.Run("fail run UpdateById", func(t *testing.T) {
-		mocUserP := user.User{Name: "anonim2", Email: "anonim@2", Password: "anonim2"}
+	t.Run("success run TaskCompleted", func(t *testing.T) {
+		mocUserP := user.User{Name: "anonim12", Email: "anonim@12", Password: "anonim12"}
+		if _, err := _lib.New(db).Create(mocUserP); err != nil {
+			t.Fatal()
+		}
+		mockTaskP := task.Task{Name: "Taskanonim1234", Priority: 5, Project_id: 1}
+		if _, err := repo.Create(1, mockTaskP); err != nil {
+			t.Fatal()
+		}
+		mockTask := request.TaskRequest{Status: true}
+
+		res, err := repo.TaskCompleted(1, 1, mockTask)
+
+		assert.Nil(t, err)
+		assert.Equal(t, true, res.Status)
+	})
+}
+
+func TestTaskReopened(t *testing.T) {
+	config := configs.GetConfig()
+	db := utils.InitDB(config)
+	repo := New(db)
+	db.Migrator().DropTable(&project.Project{})
+	db.Migrator().DropTable(&task.Task{})
+	db.Migrator().DropTable(&user.User{})
+	db.AutoMigrate(&project.Project{})
+	db.AutoMigrate(&task.Task{})
+	db.AutoMigrate(&user.User{})
+
+	t.Run("fail run TaskReopened", func(t *testing.T) {
+		mocUserP := user.User{Name: "anonim1", Email: "anonim@1", Password: "anonim1"}
 		if _, err := _lib.New(db).Create(mocUserP); err != nil {
 			t.Fatal()
 		}
@@ -290,7 +320,26 @@ func TestUpdateStatus(t *testing.T) {
 		if _, err := repo.Create(1, mockTaskP); err != nil {
 			t.Fatal()
 		}
-		_, err := repo.UpdateStatus(10, 1, true)
+		mockTask := request.TaskRequest{Status: false}
+		_, err := repo.TaskReopened(5, 1, mockTask)
 		assert.NotNil(t, err)
+
+	})
+
+	t.Run("success run TaskReopened", func(t *testing.T) {
+		mocUserP := user.User{Name: "anonim12", Email: "anonim@12", Password: "anonim12"}
+		if _, err := _lib.New(db).Create(mocUserP); err != nil {
+			t.Fatal()
+		}
+		mockTaskP := task.Task{Name: "Taskanonim1234", Priority: 5, Project_id: 1}
+		if _, err := repo.Create(1, mockTaskP); err != nil {
+			t.Fatal()
+		}
+		mockTask := request.TaskRequest{Status: false}
+
+		res, err := repo.TaskReopened(1, 1, mockTask)
+
+		assert.Nil(t, err)
+		assert.Equal(t, false, res.Status)
 	})
 }

@@ -83,15 +83,33 @@ func (td *TaskDb) GetByIdResp(id int, user_id int) (response.TaskResponse, error
 	return taskResp, nil
 }
 
-func (td *TaskDb) UpdateStatus(id int, user_id int, status bool) (bool, error) {
+func (td *TaskDb) TaskCompleted(id int, user_id int, taskRequest request.TaskRequest) (task.Task, error) {
 
-	taskM := task.Task{}
+	// completeTask := task.Task{}
 
-	res := td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Status: status}).First(&taskM)
+	res := td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Status: taskRequest.Status})
 
-	if res.RowsAffected == 0 {
-		return taskM.Status, res.Error
+	if res.Statement.RowsAffected == 0 {
+		taskRequest.Status = false
+		return task.Task{}, errors.New(gorm.ErrRecordNotFound.Error())
 	}
 
-	return taskM.Status, nil
+	task := taskRequest.ToTask()
+
+	return task, nil
+
+}
+
+func (td *TaskDb) TaskReopened(id int, user_id int, taskRequest request.TaskRequest) (task.Task, error) {
+
+	res := td.db.Model(task.Task{Model: gorm.Model{ID: uint(id)}, User_ID: uint(user_id)}).Updates(task.Task{Status: taskRequest.Status})
+
+	if res.Statement.RowsAffected == 0 {
+		taskRequest.Status = true
+		return task.Task{}, errors.New(gorm.ErrRecordNotFound.Error())
+	}
+
+	task := taskRequest.ToTask()
+
+	return task, nil
 }
