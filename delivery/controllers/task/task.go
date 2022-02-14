@@ -166,7 +166,7 @@ func (tc *TaskController) UpdateByStatus() echo.HandlerFunc {
 			))
 		}
 
-		res, err := tc.repo.UpdateByStatus(id, user_id, statusTask)
+		res, err := tc.repo.UpdateStatus(id, user_id, statusTask)
 
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, base.InternalServerError(

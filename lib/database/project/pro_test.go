@@ -25,7 +25,7 @@ func TestCreate(t *testing.T) {
 	db.AutoMigrate(&task.Task{})
 
 	t.Run("success run Create", func(t *testing.T) {
-		mockUser := user.User{Name: "Useranonim123", Email: "anonim@123", Password: "anonim123"}
+		mockUser := user.User{Name: "Useranonim1", Email: "anonim@1", Password: "anonim1"}
 
 		if _, err := _lib.New(db).Create(mockUser); err != nil {
 			t.Fatal()
@@ -39,12 +39,11 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("fail run Create", func(t *testing.T) {
-		mockUser := user.User{Name: "Useranonim1234", Email: "anonim@1234", Password: "anonim1234"}
+		mockUser := user.User{Name: "Useranonim1", Email: "anonim@2", Password: "anonim2"}
 
 		if _, err := _lib.New(db).Create(mockUser); err != nil {
 			t.Fatal()
 		}
-
 		mockPro := project.Project{Model: gorm.Model{ID: 1}, User_ID: 1, Name: "anonim"}
 		_, err := repo.Create(int(mockPro.User_ID), mockPro)
 		assert.NotNil(t, err)
@@ -82,7 +81,7 @@ func TestGetById(t *testing.T) {
 	})
 
 	t.Run("fail run GetById", func(t *testing.T) {
-		_, err := repo.GetById(2, 1)
+		_, err := repo.GetById(10, 1)
 		assert.NotNil(t, err)
 	})
 }
@@ -117,7 +116,7 @@ func TestUpdateById(t *testing.T) {
 
 	t.Run("fail run UpdateById", func(t *testing.T) {
 		mockPro := request.ProRequest{Name: "anonim321"}
-		_, err := repo.UpdateById(2, 1, mockPro)
+		_, err := repo.UpdateById(10, 1, mockPro)
 		assert.NotNil(t, err)
 	})
 }
@@ -150,7 +149,7 @@ func TestDeleteById(t *testing.T) {
 	})
 
 	t.Run("fail run DeleteById", func(t *testing.T) {
-		_, err := repo.DeleteById(2, 1)
+		_, err := repo.DeleteById(10, 1)
 		assert.NotNil(t, err)
 	})
 }

@@ -14,5 +14,5 @@ type Task interface {
 	DeleteById(id int, user_id int) (gorm.DeletedAt, error)
 	GetAll(user_id int) ([]response.TaskResponse, error)
 	GetByIdResp(id int, user_id int) (response.TaskResponse, error)
-	UpdateByStatus(id int, user_id int, status bool) (bool, error)
+	UpdateStatus(id int, user_id int, status bool) (bool, error)
 }

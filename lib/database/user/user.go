@@ -8,6 +8,7 @@ import (
 	"part3/models/user/request"
 	"part3/models/user/response"
 
+	"github.com/labstack/gommon/log"
 	"gorm.io/gorm"
 )
 
@@ -29,14 +30,10 @@ func (ud *UserDb) Create(newUser user.User) (user.User, error) {
 func (ud *UserDb) GetById(id int) (response.UserResponse, error) {
 	userResp := response.UserResponse{}
 
-	// if err := ud.db.Model(&user.User{}).Where("id = ?", id).First(&userResp).Error; err != nil {
-	// 	return response.UserResponse{}, err
-	// }
+	res := ud.db.Model(&user.User{}).Where("id = ?", id).First(&userResp)
 
-	resUser := ud.db.Model(&user.User{}).Where("id = ?", id).First(&userResp)
-
-	if resUser.RowsAffected == 0 {
-		return response.UserResponse{}, resUser.Error
+	if res.RowsAffected == 0 {
+		return response.UserResponse{}, res.Error
 	}
 
 	project := []proResp.ProResponse{}
@@ -88,9 +85,9 @@ func (ud *UserDb) DeleteById(id int) (gorm.DeletedAt, error) {
 func (ud *UserDb) GetAll() ([]response.UserResponse, error) {
 	userRespArr := []response.UserResponse{}
 
-	resUser := ud.db.Model(user.User{}).Limit(5).Find(&userRespArr)
-
-	if resUser.RowsAffected == 0 {
+	res := ud.db.Model(user.User{}).Find(&userRespArr)
+	log.Info(res.RowsAffected)
+	if res.RowsAffected == 0 {
 		return nil, errors.New(gorm.ErrRecordNotFound.Error())
 	}
 

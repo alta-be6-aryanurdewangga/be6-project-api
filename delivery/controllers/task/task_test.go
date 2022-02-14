@@ -552,7 +552,7 @@ func (m *MockTaskLib) GetByIdResp(id int, user_id int) (response.TaskResponse, e
 	return response.TaskResponse{}, nil
 }
 
-func (m *MockTaskLib) UpdateByStatus(id int, user_id int, status bool) (bool, error) {
+func (m *MockTaskLib) UpdateStatus(id int, user_id int, status bool) (bool, error) {
 
 	return status, nil
 }
@@ -582,7 +582,7 @@ func (m *MockFailTaskLib) GetByIdResp(id int, user_id int) (response.TaskRespons
 	return response.TaskResponse{}, errors.New("error in database process")
 }
 
-func (m *MockFailTaskLib) UpdateByStatus(id int, user_id int, status bool) (bool, error) {
+func (m *MockFailTaskLib) UpdateStatus(id int, user_id int, status bool) (bool, error) {
 	return false, errors.New("error in database process")
 }
 
@@ -611,7 +611,7 @@ func (m *MockFailGetByIdRespTaskLib) GetByIdResp(id int, user_id int) (response.
 	return response.TaskResponse{}, errors.New("error in database process")
 }
 
-func (m *MockFailGetByIdRespTaskLib) UpdateByStatus(id int, user_id int, status bool) (bool, error) {
+func (m *MockFailGetByIdRespTaskLib) UpdateStatus(id int, user_id int, status bool) (bool, error) {
 	return false, errors.New("error in database process")
 }
 
